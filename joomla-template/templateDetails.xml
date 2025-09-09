@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="template" client="site">
+    <name>webmaster-ai</name>
+    <version>1.0.0</version>
+    <creationDate>2024-12</creationDate>
+    <author>WebMaster.AI</author>
+    <authorEmail>info@webmaster.ai</authorEmail>
+    <authorUrl>https://webmaster.ai</authorUrl>
+    <copyright>Copyright © 2024 WebMaster.AI. All rights reserved.</copyright>
+    <license>GPL v2.0</license>
+    <description>TPL_WEBMASTER_AI_XML_DESCRIPTION</description>
+    
+    <files>
+        <filename>index.php</filename>
+        <filename>templateDetails.xml</filename>
+        <filename>template_preview.png</filename>
+        <filename>template_thumbnail.png</filename>
+        <folder>css</folder>
+        <folder>js</folder>
+        <folder>images</folder>
+        <folder>language</folder>
+        <folder>html</folder>
+    </files>
+    
+    <positions>
+        <position>navigation</position>
+        <position>hero</position>
+        <position>about</position>
+        <position>portfolio</position>
+        <position>awards</position>
+        <position>blog</position>
+        <position>cta</position>
+        <position>footer</position>
+        <position>debug</position>
+    </positions>
+    
+    <config>
+        <fields name="params">
+            <fieldset name="colors" label="TPL_WEBMASTER_AI_COLORS">
+                <field
+                    name="primary_color"
+                    type="color"
+                    label="TPL_WEBMASTER_AI_PRIMARY_COLOR"
+                    description="TPL_WEBMASTER_AI_PRIMARY_COLOR_DESC"
+                    default="#2D3748"
+                />
+                <field
+                    name="accent_color"
+                    type="color"
+                    label="TPL_WEBMASTER_AI_ACCENT_COLOR"
+                    description="TPL_WEBMASTER_AI_ACCENT_COLOR_DESC"
+                    default="#3B82F6"
+                />
+            </fieldset>
+            
+            <fieldset name="hero" label="TPL_WEBMASTER_AI_HERO">
+                <field
+                    name="hero_title"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_HERO_TITLE"
+                    description="TPL_WEBMASTER_AI_HERO_TITLE_DESC"
+                    default="Веб-мастер &amp; AI-интегратор"
+                />
+                <field
+                    name="hero_subtitle"
+                    type="textarea"
+                    label="TPL_WEBMASTER_AI_HERO_SUBTITLE"
+                    description="TPL_WEBMASTER_AI_HERO_SUBTITLE_DESC"
+                    default="Создаю сайты, которые работают. 15 лет опыта + современные AI-технологии = быстрые, умные и адаптивные веб-решения для вашего бизнеса"
+                />
+                <field
+                    name="hero_background"
+                    type="media"
+                    label="TPL_WEBMASTER_AI_HERO_BG"
+                    description="TPL_WEBMASTER_AI_HERO_BG_DESC"
+                    default=""
+                />
+            </fieldset>
+            
+            <fieldset name="stats" label="TPL_WEBMASTER_AI_STATS">
+                <field
+                    name="stat1_number"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT1_NUMBER"
+                    default="15+"
+                />
+                <field
+                    name="stat1_text"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT1_TEXT"
+                    default="Лет опыта"
+                />
+                <field
+                    name="stat2_number"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT2_NUMBER"
+                    default="200+"
+                />
+                <field
+                    name="stat2_text"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT2_TEXT"
+                    default="Проектов"
+                />
+                <field
+                    name="stat3_number"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT3_NUMBER"
+                    default="50+"
+                />
+                <field
+                    name="stat3_text"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT3_TEXT"
+                    default="AI интеграций"
+                />
+                <field
+                    name="stat4_number"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT4_NUMBER"
+                    default="99%"
+                />
+                <field
+                    name="stat4_text"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_STAT4_TEXT"
+                    default="Довольных клиентов"
+                />
+            </fieldset>
+            
+            <fieldset name="contact" label="TPL_WEBMASTER_AI_CONTACT">
+                <field
+                    name="email"
+                    type="email"
+                    label="TPL_WEBMASTER_AI_EMAIL"
+                    default="info@webmaster.ai"
+                />
+                <field
+                    name="phone"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_PHONE"
+                    default="+7 (999) 123-45-67"
+                />
+                <field
+                    name="telegram"
+                    type="text"
+                    label="TPL_WEBMASTER_AI_TELEGRAM"
+                    default="@webmaster_ai"
+                />
+                <field
+                    name="github"
+                    type="url"
+                    label="TPL_WEBMASTER_AI_GITHUB"
+                    default="https://github.com/webmaster-ai"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
