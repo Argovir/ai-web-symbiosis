@@ -1,6 +1,6 @@
 import { Check, Zap, Heart, Target } from "lucide-react";
 const AboutSection = () => {
-  const classicSkills = ["HTML5, CSS3 (SASS/LESS)", "JavaScript (ES6+)", "React, Vue.js", "WordPress, PHP", "Responsive Design", "Performance Optimization"];
+  const classicSkills = ["HTML5, CSS3 (SASS/LESS)", "JavaScript (ES6+)", "Joomla, WordPress", "Django - Python", "Responsive Design", "Performance Optimization"];
   const aiSkills = ["OpenAI API интеграция", "Midjourney автоматизация", "AI чат-боты", "ML аналитика", "Генерация контента", "Персонализация UX"];
   const values = [{
     icon: Zap,

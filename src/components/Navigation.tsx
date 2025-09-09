@@ -38,13 +38,13 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="font-geist font-bold text-xl">
-            <span className="text-zinc-500">WebMaster</span>
+            <span className={`transition-colors duration-300 ${isScrolled ? 'text-zinc-700' : 'text-white'}`}>WebMaster</span>
             <span className="text-accent">.AI</span>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map(item => <button key={item.href} onClick={() => scrollToSection(item.href)} className="transition-colors duration-200 font-medium text-zinc-500">
+            {navItems.map(item => <button key={item.href} onClick={() => scrollToSection(item.href)} className={`transition-colors duration-200 font-medium ${isScrolled ? 'text-zinc-700 hover:text-accent' : 'text-white hover:text-accent'}`}>
                 {item.label}
               </button>)}
             <Button variant="default" size="sm" onClick={() => scrollToSection('#contact')}>

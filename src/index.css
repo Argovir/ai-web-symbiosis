@@ -29,12 +29,12 @@
     --muted: 215 15% 95%;
     --muted-foreground: 215 13% 65%;
     
-    /* Accent - Sea Wave Teal */
-    --accent: 174 72% 41%;
+    /* Accent - Sky Blue */
+    --accent: 200 80% 55%;
     --accent-foreground: 0 0% 100%;
     
-    /* Success - Emerald Green */
-    --success: 160 84% 39%;
+    /* Success - Light Sky Blue */
+    --success: 200 70% 50%;
     --success-foreground: 0 0% 100%;
     
     --destructive: 0 84.2% 60.2%;
@@ -42,7 +42,7 @@
     
     --border: 215 15% 90%;
     --input: 215 15% 90%;
-    --ring: 174 72% 41%;
+    --ring: 200 80% 55%;
     
     --radius: 12px;
     
@@ -67,7 +67,7 @@
     --popover: 215 25% 20%;
     --popover-foreground: 0 0% 95%;
     
-    --primary: 174 72% 41%;
+    --primary: 200 80% 55%;
     --primary-foreground: 215 28% 17%;
     
     --secondary: 215 20% 25%;
@@ -76,12 +76,12 @@
     --muted: 215 20% 25%;
     --muted-foreground: 215 15% 70%;
     
-    --accent: 174 72% 41%;
+    --accent: 200 80% 55%;
     --accent-foreground: 215 28% 17%;
     
     --border: 215 20% 30%;
     --input: 215 20% 25%;
-    --ring: 174 72% 41%;
+    --ring: 200 80% 55%;
     
     --section-bg: 215 25% 20%;
   }
