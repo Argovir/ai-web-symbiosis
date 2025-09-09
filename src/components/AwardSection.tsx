@@ -1,0 +1,117 @@
+import { Award, Star, Calendar } from "lucide-react";
+
+const AwardSection = () => {
+  return (
+    <section className="py-24 section-bg" data-animate>
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-success/10 text-success rounded-full border border-success/20 mb-6">
+              <Award className="w-4 h-4" />
+              <span className="text-sm font-medium">Признание</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold font-geist mb-6">
+              Награды и достижения
+            </h2>
+            <p className="text-xl text-muted-foreground">
+              Профессиональное признание и вклад в развитие отрасли
+            </p>
+          </div>
+
+          {/* Award Card */}
+          <div className="bg-card rounded-2xl border border-border/50 overflow-hidden shadow-lg hover-lift">
+            <div className="grid md:grid-cols-2 gap-8 p-8">
+              {/* Award Image */}
+              <div className="order-2 md:order-1">
+                <div className="aspect-[4/3] bg-gradient-to-br from-success/10 to-accent/10 rounded-xl border-2 border-dashed border-success/30 flex items-center justify-center">
+                  <div className="text-center">
+                    <Award className="w-16 h-16 text-success mx-auto mb-4" />
+                    <p className="text-muted-foreground font-medium">
+                      Изображение почетной грамоты
+                    </p>
+                    <p className="text-sm text-muted-foreground/70 mt-2">
+                      (будет загружено позже)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Award Content */}
+              <div className="order-1 md:order-2 flex flex-col justify-center">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center">
+                    <Star className="w-6 h-6 text-success" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>2022 год</span>
+                    </div>
+                    <h3 className="font-semibold text-success">
+                      Министерство цифрового развития
+                    </h3>
+                  </div>
+                </div>
+
+                <h4 className="text-2xl font-bold font-geist mb-4">
+                  За вклад в развитие цифровых технологий в малом бизнесе
+                </h4>
+
+                <p className="text-muted-foreground leading-relaxed mb-6">
+                  Награда получена за создание инновационных веб-решений, которые помогли 
+                  более чем 50 предприятиям малого и среднего бизнеса успешно адаптироваться 
+                  к цифровой экономике и повысить свою конкурентоспособность.
+                </p>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-success rounded-full"></div>
+                    <span className="text-sm">50+ успешных цифровых трансформаций</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-success rounded-full"></div>
+                    <span className="text-sm">Рост выручки клиентов в среднем на 40%</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-success rounded-full"></div>
+                    <span className="text-sm">Внедрение AI-решений в бизнес-процессы</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Recognition */}
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            <div className="text-center p-6">
+              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Award className="w-6 h-6 text-accent" />
+              </div>
+              <h4 className="font-semibold mb-2">Топ-10 разработчиков</h4>
+              <p className="text-sm text-muted-foreground">Региональный рейтинг веб-мастеров 2023</p>
+            </div>
+            
+            <div className="text-center p-6">
+              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Star className="w-6 h-6 text-accent" />
+              </div>
+              <h4 className="font-semibold mb-2">5.0 рейтинг</h4>
+              <p className="text-sm text-muted-foreground">Средняя оценка на фриланс платформах</p>
+            </div>
+            
+            <div className="text-center p-6">
+              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Award className="w-6 h-6 text-accent" />
+              </div>
+              <h4 className="font-semibold mb-2">Сертификат AI</h4>
+              <p className="text-sm text-muted-foreground">OpenAI API Integration Specialist</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AwardSection;
