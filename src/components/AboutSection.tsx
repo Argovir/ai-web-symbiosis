@@ -1,44 +1,21 @@
 import { Check, Zap, Heart, Target } from "lucide-react";
-
 const AboutSection = () => {
-  const classicSkills = [
-    "HTML5, CSS3 (SASS/LESS)",
-    "JavaScript (ES6+)",
-    "React, Vue.js",
-    "WordPress, PHP",
-    "Responsive Design",
-    "Performance Optimization"
-  ];
-
-  const aiSkills = [
-    "OpenAI API интеграция",
-    "Midjourney автоматизация",
-    "AI чат-боты",
-    "ML аналитика",
-    "Генерация контента",
-    "Персонализация UX"
-  ];
-
-  const values = [
-    {
-      icon: Zap,
-      title: "Сложные задачи",
-      description: "Люблю решать нестандартные технические задачи, которые требуют творческого подхода"
-    },
-    {
-      icon: Heart,
-      title: "Долгосрочное сотрудничество", 
-      description: "Ценю партнерские отношения с клиентами и развиваю проекты на долгой дистанции"
-    },
-    {
-      icon: Target,
-      title: "Фокус на результат",
-      description: "Каждый проект должен приносить реальную пользу бизнесу клиента"
-    }
-  ];
-
-  return (
-    <section id="about" className="py-24 section-bg" data-animate>
+  const classicSkills = ["HTML5, CSS3 (SASS/LESS)", "JavaScript (ES6+)", "React, Vue.js", "WordPress, PHP", "Responsive Design", "Performance Optimization"];
+  const aiSkills = ["OpenAI API интеграция", "Midjourney автоматизация", "AI чат-боты", "ML аналитика", "Генерация контента", "Персонализация UX"];
+  const values = [{
+    icon: Zap,
+    title: "Сложные задачи",
+    description: "Люблю решать нестандартные технические задачи, которые требуют творческого подхода"
+  }, {
+    icon: Heart,
+    title: "Долгосрочное сотрудничество",
+    description: "Ценю партнерские отношения с клиентами и развиваю проекты на долгой дистанции"
+  }, {
+    icon: Target,
+    title: "Фокус на результат",
+    description: "Каждый проект должен приносить реальную пользу бизнесу клиента"
+  }];
+  return <section id="about" className="py-24 section-bg" data-animate>
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Section Header */}
@@ -57,11 +34,7 @@ const AboutSection = () => {
               <h3 className="text-2xl font-semibold font-geist text-primary">
                 Мой путь в веб-разработке
               </h3>
-              <p className="text-lg leading-relaxed">
-                15 лет назад начинал с верстки в Notepad++. Прошел путь через jQuery, PHP, React 
-                и до современных нейросетевых фреймворков. Видел, как меняются технологии, 
-                тренды и подходы к разработке.
-              </p>
+              <p className="text-lg leading-relaxed">15 лет назад начинал с верстки в Notepad++. Прошел путь через HTML, jQuery, PHP и до современных нейросетевых фреймворков. Видел, как меняются технологии, тренды и подходы к разработке.</p>
               <p className="text-lg leading-relaxed">
                 Сегодня верю, что будущее веба — за гибридом человеческой логики и машинной 
                 эффективности. AI не заменяет разработчика, а делает его более продуктивным 
@@ -78,8 +51,7 @@ const AboutSection = () => {
               <h3 className="text-2xl font-semibold font-geist text-primary">
                 Принципы работы
               </h3>
-              {values.map((value, index) => (
-                <div key={index} className="flex gap-4">
+              {values.map((value, index) => <div key={index} className="flex gap-4">
                   <div className="flex-shrink-0 w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
                     <value.icon className="w-6 h-6 text-accent" />
                   </div>
@@ -87,8 +59,7 @@ const AboutSection = () => {
                     <h4 className="font-semibold mb-2">{value.title}</h4>
                     <p className="text-muted-foreground">{value.description}</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
 
@@ -100,12 +71,10 @@ const AboutSection = () => {
                 Классические технологии
               </h3>
               <div className="space-y-3">
-                {classicSkills.map((skill, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                {classicSkills.map((skill, index) => <div key={index} className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-success flex-shrink-0" />
                     <span className="text-lg">{skill}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
 
@@ -116,19 +85,15 @@ const AboutSection = () => {
                 AI & Инновации
               </h3>
               <div className="space-y-3">
-                {aiSkills.map((skill, index) => (
-                  <div key={index} className="flex items-center gap-3">
+                {aiSkills.map((skill, index) => <div key={index} className="flex items-center gap-3">
                     <Check className="w-5 h-5 text-accent flex-shrink-0" />
                     <span className="text-lg">{skill}</span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default AboutSection;
