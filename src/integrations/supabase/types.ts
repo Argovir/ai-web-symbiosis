@@ -14,7 +14,201 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          content: string
+          created_at: string
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          meta_description: string | null
+          meta_title: string | null
+          published_at: string | null
+          slug: string
+          status: Database["public"]["Enums"]["post_status"]
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["post_status"]
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["post_status"]
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      portfolio_projects: {
+        Row: {
+          category: Database["public"]["Enums"]["project_category"]
+          created_at: string
+          created_by: string | null
+          description: string
+          featured: boolean | null
+          github_url: string | null
+          id: string
+          image_url: string | null
+          is_published: boolean | null
+          live_url: string | null
+          sort_order: number | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["project_category"]
+          created_at?: string
+          created_by?: string | null
+          description: string
+          featured?: boolean | null
+          github_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          live_url?: string | null
+          sort_order?: number | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["project_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          featured?: boolean | null
+          github_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          live_url?: string | null
+          sort_order?: number | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          about_description: string | null
+          about_title: string
+          ai_integrations: number | null
+          contact_email: string | null
+          contact_phone: string | null
+          hero_description: string | null
+          hero_subtitle: string
+          hero_title: string
+          id: string
+          projects_count: number | null
+          satisfaction_rate: number | null
+          social_github: string | null
+          social_linkedin: string | null
+          social_telegram: string | null
+          updated_at: string
+          updated_by: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          about_description?: string | null
+          about_title?: string
+          ai_integrations?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          hero_description?: string | null
+          hero_subtitle?: string
+          hero_title?: string
+          id?: string
+          projects_count?: number | null
+          satisfaction_rate?: number | null
+          social_github?: string | null
+          social_linkedin?: string | null
+          social_telegram?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          about_description?: string | null
+          about_title?: string
+          ai_integrations?: number | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          hero_description?: string | null
+          hero_subtitle?: string
+          hero_title?: string
+          id?: string
+          projects_count?: number | null
+          satisfaction_rate?: number | null
+          social_github?: string | null
+          social_linkedin?: string | null
+          social_telegram?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +217,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      post_status: "draft" | "published" | "archived"
+      project_category: "classic" | "ai" | "ecommerce"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +345,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      post_status: ["draft", "published", "archived"],
+      project_category: ["classic", "ai", "ecommerce"],
+    },
   },
 } as const
