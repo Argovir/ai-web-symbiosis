@@ -20,61 +20,71 @@ const CTASection = () => {
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl md:text-6xl font-bold font-geist mb-6 leading-tight">
-              Готовы создать современный сайт для вашего бизнеса?
-            </h2>
-            <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Обсудим ваш проект, определим техническое решение и создадим сайт, 
-              который будет приносить реальную пользу вашему бизнесу
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button 
-                size="lg" 
-                variant="secondary"
-                onClick={scrollToContact}
-                className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-medium gap-2 hover-glow"
-              >
-                Обсудить проект
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-              
-              <div className="flex items-center gap-4 text-white/80">
-                <span className="text-sm">или свяжитесь напрямую:</span>
-                <div className="flex gap-2">
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    className="bg-white/10 border-white/20 text-white hover:bg-white/20 p-2"
-                    asChild
-                  >
-                    <a href="mailto:contact@example.com">
-                      <Mail className="w-4 h-4" />
-                    </a>
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    className="bg-white/10 border-white/20 text-white hover:bg-white/20 p-2"
-                    asChild
-                  >
-                    <a href="tel:+7900000000">
-                      <Phone className="w-4 h-4" />
-                    </a>
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    className="bg-white/10 border-white/20 text-white hover:bg-white/20 p-2"
-                    asChild
-                  >
-                    <a href="https://t.me/webmaster" target="_blank" rel="noopener noreferrer">
-                      <MessageCircle className="w-4 h-4" />
-                    </a>
-                  </Button>
+          <div className="max-w-6xl mx-auto flex items-center gap-12">
+            <div className="flex-1 text-left">
+              <h2 className="text-4xl md:text-6xl font-bold font-geist mb-6 leading-tight">
+                Готовы создать современный сайт для вашего бизнеса?
+              </h2>
+              <p className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed">
+                Обсудим ваш проект, определим техническое решение и создадим сайт,
+                который будет приносить реальную пользу вашему бизнесу
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                <Button
+                  size="lg"
+                  variant="secondary"
+                  onClick={scrollToContact}
+                  className="bg-white text-primary hover:bg-white/90 px-8 py-4 text-lg font-medium gap-2 hover-glow"
+                >
+                  Обсудить проект
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+
+                <div className="flex items-center gap-4 text-white/80">
+                  <span className="text-sm">или свяжитесь напрямую:</span>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 p-2"
+                      asChild
+                    >
+                      <a href="mailto:contact@example.com">
+                        <Mail className="w-4 h-4" />
+                      </a>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 p-2"
+                      asChild
+                    >
+                      <a href="tel:+7900000000">
+                        <Phone className="w-4 h-4" />
+                      </a>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 p-2"
+                      asChild
+                    >
+                      <a href="https://t.me/webmaster" target="_blank" rel="noopener noreferrer">
+                        <MessageCircle className="w-4 h-4" />
+                      </a>
+                    </Button>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <div className="flex-shrink-0">
+              <img
+                src={`${import.meta.env.BASE_URL}animation/avatars/000.jpg`}
+                alt="Avatar"
+                className="w-64 h-64 rounded-full object-cover border-4 border-white/20 shadow-lg"
+              />
             </div>
           </div>
         </div>

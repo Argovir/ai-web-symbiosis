@@ -21,9 +21,9 @@ const ScrollVideoCanvas = () => {
 
     // Генерируем пути к изображениям
     const images: string[] = [];
-    for (let i = 1; i < 40; i++) {
+    for (let i = 1; i <= 58; i++) {
       const frameNumber = i.toString().padStart(3, "0");
-      images.push(`/animation/${frameNumber}.jpg`);
+      images.push(`/animation/hero/${frameNumber}.jpg`);
     }
     const frameCount = images.length; // 58
 
