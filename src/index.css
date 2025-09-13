@@ -178,7 +178,14 @@
 
   /* Portfolio Grid */
   .portfolio-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8;
+    @apply grid gap-8;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  @media (min-width: 768px) {
+    .portfolio-grid {
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
   }
 
   /* Project Card Styles */

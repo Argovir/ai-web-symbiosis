@@ -1,78 +1,179 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github, Filter } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  image_url?: string;
+  category: "classic" | "ai" | "ecommerce";
+  tags: string[];
+  live_url?: string;
+  github_url?: string;
+  featured: boolean;
+  sort_order: number;
+  is_published: boolean;
+  created_at: string;
+}
+
+const categoryLabels = {
+  classic: "Классические сайты",
+  ai: "AI-проекты",
+  ecommerce: "Интернет-магазины"
+};
 
 const PortfolioSection = () => {
   const [activeFilter, setActiveFilter] = useState("Все");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [settings, setSettings] = useState<any>({});
 
   const filters = ["Все", "Классические сайты", "AI-проекты", "Интернет-магазины"];
 
-  const projects = [
-    {
-      id: 1,
-      title: "AI-Помощник для E-commerce",
-      description: "Интеллектуальный чат-бот с интеграцией GPT-4 для консультации покупателей и персонализации рекомендаций",
-      image: "/placeholder.svg",
-      tags: ["React", "OpenAI API", "Node.js", "MongoDB"],
-      category: "AI-проекты",
-      liveUrl: "#",
-      githubUrl: "#"
-    },
-    {
-      id: 2,
-      title: "Корпоративный сайт с CMS",
-      description: "Современный корпоративный сайт с кастомной CMS, адаптивным дизайном и высокой производительностью",
-      image: "/placeholder.svg",
-      tags: ["WordPress", "PHP", "MySQL", "SCSS"],
-      category: "Классические сайты",
-      liveUrl: "#",
-      githubUrl: "#"
-    },
-    {
-      id: 3,
-      title: "Автоматизация контента с AI",
-      description: "Система автоматической генерации и публикации контента с использованием Midjourney API и ChatGPT",
-      image: "/placeholder.svg",
-      tags: ["Python", "Midjourney API", "WordPress", "Automation"],
-      category: "AI-проекты",
-      liveUrl: "#",
-      githubUrl: "#"
-    },
-    {
-      id: 4,
-      title: "Интернет-магазин премиум класса",
-      description: "Высоконагруженный интернет-магазин с персонализацией, аналитикой и интеграцией платежных систем",
-      image: "/placeholder.svg",
-      tags: ["React", "WooCommerce", "Stripe", "Analytics"],
-      category: "Интернет-магазины",
-      liveUrl: "#",
-      githubUrl: "#"
-    },
-    {
-      id: 5,
-      title: "SaaS приложение с ML",
-      description: "Веб-приложение для анализа данных с машинным обучением и интерактивными дашбордами",
-      image: "/placeholder.svg",
-      tags: ["Vue.js", "Python", "TensorFlow", "D3.js"],
-      category: "AI-проекты",
-      liveUrl: "#",
-      githubUrl: "#"
-    },
-    {
-      id: 6,
-      title: "Многоязычный портал",
-      description: "Корпоративный портал с поддержкой 8 языков, сложной архитектурой и высокими требованиями к производительности",
-      image: "/placeholder.svg",
-      tags: ["React", "Next.js", "i18n", "Performance"],
-      category: "Классические сайты",
-      liveUrl: "#",
-      githubUrl: "#"
-    }
-  ];
+  useEffect(() => {
+    loadSettings();
+    loadProjects();
+  }, []);
 
-  const filteredProjects = activeFilter === "Все" 
-    ? projects 
-    : projects.filter(project => project.category === activeFilter);
+  const loadSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("portfolio_title, portfolio_description, portfolio_columns")
+        .limit(1)
+        .single();
+
+      if (error && error.code !== "PGRST116") {
+        console.error("Error loading settings:", error);
+      }
+
+      if (data) {
+        setSettings(data);
+      } else {
+        // Default settings
+        setSettings({
+          portfolio_title: "Портфолио",
+          portfolio_description: "Избранные проекты: от классических сайтов до AI-интеграций",
+          portfolio_columns: 3
+        });
+      }
+    } catch (err) {
+      console.error("Error loading settings:", err);
+      // Use defaults on error
+      setSettings({
+        portfolio_title: "Портфолио",
+        portfolio_description: "Избранные проекты: от классических сайтов до AI-интеграций",
+        portfolio_columns: 3
+      });
+    }
+  };
+
+  const loadProjects = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const { data, error: supabaseError } = await supabase
+        .from("portfolio_projects")
+        .select("*")
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true });
+
+      if (supabaseError) throw supabaseError;
+
+      // Fallback data for testing styles if no projects in database
+      const fallbackProjects = data && data.length > 0 ? data : [
+        {
+          id: "1",
+          title: "AI-Помощник для E-commerce",
+          description: "Интеллектуальный чат-бот с интеграцией GPT-4 для консультации покупателей",
+          image_url: "/placeholder.svg",
+          category: "ai" as const,
+          tags: ["React", "OpenAI API", "Node.js"],
+          live_url: "#",
+          github_url: "#",
+          featured: true,
+          sort_order: 10,
+          is_published: true,
+          created_at: new Date().toISOString()
+        },
+        {
+          id: "2",
+          title: "Корпоративный сайт с CMS",
+          description: "Современный корпоративный сайт с кастомной CMS и высокой производительностью",
+          image_url: "/placeholder.svg",
+          category: "classic" as const,
+          tags: ["WordPress", "PHP", "MySQL"],
+          live_url: "#",
+          github_url: "#",
+          featured: true,
+          sort_order: 20,
+          is_published: true,
+          created_at: new Date().toISOString()
+        }
+      ];
+
+      setProjects(fallbackProjects);
+    } catch (err) {
+      console.error("Error loading projects:", err);
+      setError("Не удалось загрузить проекты");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getFilteredProjects = () => {
+    if (activeFilter === "Все") return projects;
+
+    const categoryKey = Object.keys(categoryLabels).find(
+      key => categoryLabels[key as keyof typeof categoryLabels] === activeFilter
+    );
+
+    return projects.filter(project => project.category === categoryKey);
+  };
+
+  const filteredProjects = getFilteredProjects();
+
+  if (loading) {
+    return (
+      <section id="portfolio" className="py-24 bg-background" data-animate>
+        <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold font-geist mb-6">
+                Портфолио
+              </h2>
+            </div>
+            <div className="flex items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="portfolio" className="py-24 bg-background" data-animate>
+        <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold font-geist mb-6">
+                Портфолио
+              </h2>
+            </div>
+            <div className="text-center text-muted-foreground">
+              <p>{error}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="portfolio" className="py-24 bg-background" data-animate>
@@ -81,10 +182,10 @@ const PortfolioSection = () => {
           {/* Section Header */}
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold font-geist mb-6">
-              Портфолио
+              {settings.portfolio_title || "Портфолио"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Избранные проекты: от классических сайтов до AI-интеграций
+              {settings.portfolio_description || "Избранные проекты: от классических сайтов до AI-интеграций"}
             </p>
           </div>
 
@@ -104,7 +205,12 @@ const PortfolioSection = () => {
           </div>
 
           {/* Projects Grid */}
-          <div className="portfolio-grid">
+          <div
+            className="portfolio-grid"
+            style={{
+              gridTemplateColumns: `repeat(${settings.portfolio_columns || 3}, 1fr)`
+            }}
+          >
             {filteredProjects.map((project, index) => (
               <div
                 key={project.id}
@@ -112,8 +218,8 @@ const PortfolioSection = () => {
               >
                 {/* Project Image */}
                 <div className="aspect-video bg-muted rounded-t-2xl overflow-hidden">
-                  <img 
-                    src={project.image} 
+                  <img
+                    src={project.image_url || "/placeholder.svg"}
                     alt={project.title}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   />
@@ -145,7 +251,7 @@ const PortfolioSection = () => {
                       className="flex-1 gap-2"
                       asChild
                     >
-                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
+                      <a href={project.live_url || "#"} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="w-4 h-4" />
                         Демо
                       </a>
@@ -156,7 +262,7 @@ const PortfolioSection = () => {
                       className="gap-2"
                       asChild
                     >
-                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
+                      <a href={project.github_url || "#"} target="_blank" rel="noopener noreferrer">
                         <Github className="w-4 h-4" />
                         Код
                       </a>
@@ -167,12 +273,11 @@ const PortfolioSection = () => {
             ))}
           </div>
 
-          {/* Load More Button */}
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg" className="px-8">
-              Загрузить ещё проекты
-            </Button>
-          </div>
+          {filteredProjects.length === 0 && (
+            <div className="text-center mt-12">
+              <p className="text-muted-foreground">Проекты не найдены</p>
+            </div>
+          )}
         </div>
       </div>
     </section>

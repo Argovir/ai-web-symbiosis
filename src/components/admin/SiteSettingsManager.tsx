@@ -185,6 +185,49 @@ export const SiteSettingsManager = ({ onUpdate }: SiteSettingsManagerProps) => {
           </CardContent>
         </Card>
 
+        {/* Portfolio Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Секция портфолио</CardTitle>
+            <CardDescription>
+              Настройки отображения секции портфолио
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="portfolio_title">Заголовок секции</Label>
+              <Input
+                id="portfolio_title"
+                value={settings.portfolio_title || ""}
+                onChange={(e) => handleChange("portfolio_title", e.target.value)}
+                placeholder="Портфолио"
+              />
+            </div>
+            <div>
+              <Label htmlFor="portfolio_description">Описание секции</Label>
+              <Textarea
+                id="portfolio_description"
+                value={settings.portfolio_description || ""}
+                onChange={(e) => handleChange("portfolio_description", e.target.value)}
+                placeholder="Избранные проекты: от классических сайтов до AI-интеграций"
+                rows={2}
+              />
+            </div>
+            <div>
+              <Label htmlFor="portfolio_columns">Количество столбцов</Label>
+              <Input
+                id="portfolio_columns"
+                type="number"
+                min="1"
+                max="4"
+                value={settings.portfolio_columns || 3}
+                onChange={(e) => handleChange("portfolio_columns", parseInt(e.target.value) || 3)}
+                placeholder="3"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* About Section */}
         <Card>
           <CardHeader>
