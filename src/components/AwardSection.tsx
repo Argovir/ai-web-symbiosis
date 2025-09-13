@@ -24,16 +24,8 @@ const AwardSection = () => {
             <div className="grid md:grid-cols-2 gap-8 p-8">
               {/* Award Image */}
               <div className="order-2 md:order-1">
-                <div className="aspect-[4/3] bg-gradient-to-br from-success/10 to-accent/10 rounded-xl border-2 border-dashed border-success/30 flex items-center justify-center">
-                  <div className="text-center">
-                    <Award className="w-16 h-16 text-success mx-auto mb-4" />
-                    <p className="text-muted-foreground font-medium">
-                      Изображение почетной грамоты
-                    </p>
-                    <p className="text-sm text-muted-foreground/70 mt-2">
-                      (будет загружено позже)
-                    </p>
-                  </div>
+                <div className="aspect-[2/3] rounded-xl overflow-hidden flex items-center justify-center">
+                  <img src="/20150915.jpg" alt="Почетная грамота" className="w-3/4 h-3/4 object-contain" />
                 </div>
               </div>
 
