@@ -95,15 +95,15 @@ const CTASection = () => {
 
             <div className="grid md:grid-cols-3 gap-8">
               {/* Email */}
-              <div className="text-center p-8 bg-card rounded-2xl border border-border/50 hover-lift">
+              <div className="text-center p-8 bg-card rounded-2xl border border-border/50 hover-lift flex flex-col h-full">
                 <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Mail className="w-8 h-8 text-accent" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Email</h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-4 flex-grow">
                   Для деловых предложений и консультаций
                 </p>
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="mt-auto">
                   <a href="mailto:contact@example.com">
                     contact@example.com
                   </a>
@@ -111,15 +111,15 @@ const CTASection = () => {
               </div>
 
               {/* Phone */}
-              <div className="text-center p-8 bg-card rounded-2xl border border-border/50 hover-lift">
+              <div className="text-center p-8 bg-card rounded-2xl border border-border/50 hover-lift flex flex-col h-full">
                 <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Phone className="w-8 h-8 text-accent" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Телефон</h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-4 flex-grow">
                   Звоните в рабочее время (10:00 - 18:00)
                 </p>
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="mt-auto">
                   <a href="tel:+7900000000">
                     +7 (900) 000-00-00
                   </a>
@@ -127,15 +127,15 @@ const CTASection = () => {
               </div>
 
               {/* Telegram */}
-              <div className="text-center p-8 bg-card rounded-2xl border border-border/50 hover-lift">
+              <div className="text-center p-8 bg-card rounded-2xl border border-border/50 hover-lift flex flex-col h-full">
                 <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-6">
                   <MessageCircle className="w-8 h-8 text-accent" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Telegram</h3>
-                <p className="text-muted-foreground mb-4">
+                <p className="text-muted-foreground mb-4 flex-grow">
                   Быстрая связь и обмен файлами
                 </p>
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild className="mt-auto">
                   <a href="https://t.me/webmaster" target="_blank" rel="noopener noreferrer">
                     @webmaster
                   </a>
