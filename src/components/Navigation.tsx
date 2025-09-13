@@ -3,10 +3,11 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const progress = Math.min(window.scrollY / (window.innerHeight / 4), 1);
+      setScrollProgress(progress);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -33,18 +34,40 @@ const Navigation = () => {
       setIsMenuOpen(false);
     }
   };
-  return <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-background/95 backdrop-blur-sm border-b border-border shadow-lg' : 'bg-transparent'}`}>
+  const navBackground = `rgba(255, 255, 255, ${scrollProgress * 0.95})`;
+  const textColor = `rgb(${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 185)})`;
+  const logoColor = `rgb(${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 185)})`;
+
+  return <nav
+      className="fixed top-0 w-full z-50 transition-all duration-300"
+      style={{
+        backgroundColor: navBackground,
+        backdropFilter: scrollProgress > 0 ? 'blur(4px)' : 'none',
+        borderBottom: scrollProgress > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
+        boxShadow: scrollProgress > 0 ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none'
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <div className="font-geist font-bold text-xl">
-            <span className={`transition-colors duration-300 ${isScrolled ? 'text-zinc-700' : 'text-white'}`}>WebMaster</span>
+            <span
+              className="transition-colors duration-300"
+              style={{ color: logoColor }}
+            >
+              WebMaster
+            </span>
             <span className="text-accent">.AI</span>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navItems.map(item => <button key={item.href} onClick={() => scrollToSection(item.href)} className={`transition-colors duration-200 font-medium ${isScrolled ? 'text-zinc-700 hover:text-accent' : 'text-white hover:text-accent'}`}>
+            {navItems.map(item => <button
+                key={item.href}
+                onClick={() => scrollToSection(item.href)}
+                className="transition-colors duration-200 font-medium hover:text-accent"
+                style={{ color: textColor }}
+              >
                 {item.label}
               </button>)}
             <Button variant="default" size="sm" onClick={() => scrollToSection('#contact')}>
@@ -54,7 +77,7 @@ const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
-            <Button variant="ghost" size="sm" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <Button variant="ghost" size="sm" onClick={() => setIsMenuOpen(!isMenuOpen)} style={{ color: textColor }}>
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>

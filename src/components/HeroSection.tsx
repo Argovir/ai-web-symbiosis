@@ -15,7 +15,7 @@ const HeroSection = () => {
       {/* Background */}
       <ScrollVideoCanvas />
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-primary/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t z-10 from-primary/50 via-primary/20 to-transparent" />
 
       {/* Content */}
       <div className="relative container mx-auto px-4 text-center text-white">
@@ -35,8 +35,8 @@ const HeroSection = () => {
           </h1>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed fade-in-up stagger-2">
-            Создаю сайты, которые работают. 15 лет опыта + современные AI-технологии = 
+          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed fade-in-up stagger-2" style={{ textShadow: '0px 2px 4px rgba(0,0,0,0.5)' }}>
+            Создаю сайты, которые работают. 15 лет опыта + современные AI-технологии =
             быстрые, умные и адаптивные веб-решения для вашего бизнеса
           </p>
 
