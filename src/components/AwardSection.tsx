@@ -24,8 +24,8 @@ const AwardSection = () => {
             <div className="grid md:grid-cols-2 gap-8 p-8">
               {/* Award Image */}
               <div className="order-2 md:order-1">
-                <div className="aspect-[2/3] rounded-xl overflow-hidden flex items-center justify-center">
-                  <img src="/20150915.jpg" alt="Почетная грамота" className="w-3/4 h-3/4 object-contain" />
+                <div className="overflow-hidden">
+                  <img src="/20150915_preview.jpg" alt="Почетная грамота" width="300" height="425" className="object-cover rounded-md" />
                 </div>
               </div>
 
@@ -38,22 +38,21 @@ const AwardSection = () => {
                   <div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                       <Calendar className="w-4 h-4" />
-                      <span>2022 год</span>
+                      <span>2015 год</span>
                     </div>
                     <h3 className="font-semibold text-success">
-                      Министерство цифрового развития
+                      Правительство Нижегородской области
                     </h3>
                   </div>
                 </div>
 
                 <h4 className="text-2xl font-bold font-geist mb-4">
-                  За вклад в развитие цифровых технологий в малом бизнесе
+                  За вклад в развитие цифровых технологий
                 </h4>
 
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Награда получена за создание инновационных веб-решений, которые помогли 
-                  более чем 50 предприятиям малого и среднего бизнеса успешно адаптироваться 
-                  к цифровой экономике и повысить свою конкурентоспособность.
+                  Награда получена за добросовестный труд, большой вклад в развитие и совершенствование
+                  регионального инфокоммуникационного комплекса
                 </p>
 
                 <div className="space-y-3">
