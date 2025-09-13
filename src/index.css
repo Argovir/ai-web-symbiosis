@@ -60,30 +60,89 @@
   .dark {
     --background: 215 28% 17%;
     --foreground: 0 0% 95%;
-    
+
     --card: 215 25% 20%;
     --card-foreground: 0 0% 95%;
-    
+
     --popover: 215 25% 20%;
     --popover-foreground: 0 0% 95%;
-    
+
     --primary: 200 80% 55%;
     --primary-foreground: 215 28% 17%;
-    
+
     --secondary: 215 20% 25%;
     --secondary-foreground: 0 0% 95%;
-    
+
     --muted: 215 20% 25%;
     --muted-foreground: 215 15% 70%;
-    
+
     --accent: 200 80% 55%;
     --accent-foreground: 215 28% 17%;
-    
+
     --border: 215 20% 30%;
     --input: 215 20% 25%;
     --ring: 200 80% 55%;
-    
+
     --section-bg: 215 25% 20%;
+  }
+
+  /* Force light mode for specific sections */
+  .force-light {
+    --background: 0 0% 100%;
+    --foreground: 215 25% 27%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+
+    --primary: 215 28% 17%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 15% 95%;
+    --secondary-foreground: 215 25% 27%;
+
+    --muted: 215 15% 95%;
+    --muted-foreground: 215 13% 65%;
+
+    --accent: 200 80% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 215 15% 90%;
+    --input: 215 15% 90%;
+    --ring: 200 80% 55%;
+
+    --section-bg: 215 10% 98%;
+  }
+
+  .dark .force-light {
+    --background: 0 0% 100%;
+    --foreground: 215 25% 27%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 27%;
+
+    --primary: 215 28% 17%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 15% 95%;
+    --secondary-foreground: 215 25% 27%;
+
+    --muted: 215 15% 95%;
+    --muted-foreground: 215 13% 65%;
+
+    --accent: 200 80% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 215 15% 90%;
+    --input: 215 15% 90%;
+    --ring: 200 80% 55%;
+
+    --section-bg: 215 10% 98%;
   }
 }
 

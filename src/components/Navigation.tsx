@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/hooks/useTheme";
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const { theme, setTheme } = useTheme();
   useEffect(() => {
     const handleScroll = () => {
       const progress = Math.min(window.scrollY / (window.innerHeight / 4), 1);
@@ -34,17 +37,30 @@ const Navigation = () => {
       setIsMenuOpen(false);
     }
   };
-  const navBackground = `rgba(255, 255, 255, ${scrollProgress * 0.95})`;
-  const textColor = `rgb(${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 185)})`;
-  const logoColor = `rgb(${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 185)})`;
+
+  const getThemeIcon = () => {
+    if (theme === 'light') return <Sun className="w-4 h-4" />;
+    if (theme === 'dark') return <Moon className="w-4 h-4" />;
+    return <Monitor className="w-4 h-4" />;
+  };
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const navBackground = isDark
+    ? `rgba(35, 35, 39, ${scrollProgress * 0.95})` // #232327
+    : `rgba(255, 255, 255, ${scrollProgress * 0.95})`;
+  const textColor = isDark
+    ? `rgb(${Math.round(255 - scrollProgress * 64)}, ${Math.round(255 - scrollProgress * 64)}, ${Math.round(255 - scrollProgress * 64)})`
+    : `rgb(${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 185)})`;
+  const logoColor = isDark
+    ? `rgb(${Math.round(255 - scrollProgress * 64)}, ${Math.round(255 - scrollProgress * 64)}, ${Math.round(255 - scrollProgress * 64)})`
+    : `rgb(${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 192)}, ${Math.round(255 - scrollProgress * 185)})`;
 
   return <nav
       className="fixed top-0 w-full z-50 transition-all duration-300"
       style={{
         backgroundColor: navBackground,
         backdropFilter: scrollProgress > 0 ? 'blur(4px)' : 'none',
-        borderBottom: scrollProgress > 0 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
-        boxShadow: scrollProgress > 0 ? '0 4px 6px -1px rgba(0, 0, 0, 0.1)' : 'none'
+        borderBottom: scrollProgress > 0 ? `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}` : 'none',
+        boxShadow: scrollProgress > 0 ? `0 4px 6px -1px ${isDark ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 0.1)'}` : 'none'
       }}
     >
       <div className="container mx-auto px-4">
@@ -70,6 +86,27 @@ const Navigation = () => {
               >
                 {item.label}
               </button>)}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" style={{ color: textColor }}>
+                  {getThemeIcon()}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setTheme('light')}>
+                  <Sun className="w-4 h-4 mr-2" />
+                  Светлая
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('dark')}>
+                  <Moon className="w-4 h-4 mr-2" />
+                  Тёмная
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme('system')}>
+                  <Monitor className="w-4 h-4 mr-2" />
+                  Системная
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="default" size="sm" onClick={() => scrollToSection('#contact')}>
               Написать мне
             </Button>
@@ -89,7 +126,18 @@ const Navigation = () => {
               {navItems.map(item => <button key={item.href} onClick={() => scrollToSection(item.href)} className="block w-full text-left px-4 py-2 text-foreground hover:text-accent hover:bg-muted/50 transition-colors duration-200">
                   {item.label}
                 </button>)}
-              <div className="px-4 py-2">
+              <div className="px-4 py-2 space-y-2">
+                <div className="flex justify-center space-x-2">
+                  <Button variant={theme === 'light' ? 'default' : 'outline'} size="sm" onClick={() => setTheme('light')}>
+                    <Sun className="w-4 h-4" />
+                  </Button>
+                  <Button variant={theme === 'dark' ? 'default' : 'outline'} size="sm" onClick={() => setTheme('dark')}>
+                    <Moon className="w-4 h-4" />
+                  </Button>
+                  <Button variant={theme === 'system' ? 'default' : 'outline'} size="sm" onClick={() => setTheme('system')}>
+                    <Monitor className="w-4 h-4" />
+                  </Button>
+                </div>
                 <Button variant="default" size="sm" className="w-full" onClick={() => scrollToSection('#contact')}>
                   Написать мне
                 </Button>
