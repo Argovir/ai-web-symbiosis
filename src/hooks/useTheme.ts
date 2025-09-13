@@ -9,6 +9,9 @@ export const useTheme = () => {
     const savedTheme = localStorage.getItem('theme') as Theme;
     if (savedTheme) {
       setTheme(savedTheme);
+    } else {
+      // Set system as default theme if nothing saved
+      localStorage.setItem('theme', 'system');
     }
   }, []);
 
