@@ -19,7 +19,7 @@ const ScrollVideoCanvas = () => {
 
     contextRef.current = context;
 
-    // Генерируем пути к изображениям, пропуская отсутствующий 007.jpg
+    // Генерируем пути к изображениям
     const images: string[] = [];
     for (let i = 1; i < 40; i++) {
       const frameNumber = i.toString().padStart(3, "0");
