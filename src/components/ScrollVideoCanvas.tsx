@@ -21,8 +21,7 @@ const ScrollVideoCanvas = () => {
 
     // Генерируем пути к изображениям, пропуская отсутствующий 007.jpg
     const images: string[] = [];
-    for (let i = 0; i < 59; i++) {
-      if (i === 7) continue; // Пропустить 007.jpg
+    for (let i = 1; i < 40; i++) {
       const frameNumber = i.toString().padStart(3, "0");
       images.push(`/animation/${frameNumber}.jpg`);
     }

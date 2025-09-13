@@ -5,7 +5,7 @@ import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <>
-    <SpeedInsights /> {/* Аналитика Vercel */}
+    <SpeedInsights /> // Аналитика Vercel
     <App />
   </>
 );
