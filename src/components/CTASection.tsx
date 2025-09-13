@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Mail, MessageCircle, Phone } from "lucide-react";
+import ScrollAvatarCanvas from "./ScrollAvatarCanvas";
 
 const CTASection = () => {
   const scrollToContact = () => {
@@ -12,7 +13,7 @@ const CTASection = () => {
   return (
     <>
       {/* Main CTA Section */}
-      <section className="py-24 bg-gradient-to-br from-primary to-primary/90 text-white relative overflow-hidden force-light" data-animate>
+      <section className="cta-section py-12 md:py-24 bg-gradient-to-br from-primary to-primary/90 text-white relative overflow-hidden force-light" data-animate>
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
@@ -20,9 +21,9 @@ const CTASection = () => {
         </div>
 
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-6xl mx-auto flex items-center gap-12">
-            <div className="flex-1 text-left">
-              <h2 className="text-4xl md:text-6xl font-bold font-geist mb-6 leading-tight">
+          <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:gap-12">
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-4xl md:text-5xl font-bold font-geist mb-6 leading-tight">
                 Готовы создать современный сайт для вашего бизнеса?
               </h2>
               <p className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed">
@@ -30,7 +31,7 @@ const CTASection = () => {
                 который будет приносить реальную пользу вашему бизнесу
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-6 items-start">
+              <div className="flex flex-col sm:flex-row gap-6 items-center md:items-start">
                 <Button
                   size="lg"
                   variant="secondary"
@@ -41,9 +42,9 @@ const CTASection = () => {
                   <ArrowRight className="w-5 h-5" />
                 </Button>
 
-                <div className="flex items-center gap-4 text-white/80">
+                <div className="flex flex-col sm:flex-row items-center gap-4 text-white/80 text-center md:text-left">
                   <span className="text-sm">или свяжитесь напрямую:</span>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 justify-center md:justify-start">
                     <Button
                       size="sm"
                       variant="outline"
@@ -79,11 +80,9 @@ const CTASection = () => {
               </div>
             </div>
 
-            <div className="flex-shrink-0">
-              <img
-                src={`${import.meta.env.BASE_URL}animation/avatars/000.jpg`}
-                alt="Avatar"
-                className="w-64 h-64 rounded-full object-cover border-4 border-white/20 shadow-lg"
+            <div className="flex-shrink-0 mt-8 md:mt-0 flex justify-center">
+              <ScrollAvatarCanvas
+                className="w-32 h-32 md:w-64 md:h-64"
               />
             </div>
           </div>
