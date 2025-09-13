@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Award, Star, Calendar } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const AwardSection = () => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <section className="py-24 section-bg" data-animate>
       <div className="container mx-auto px-4">
@@ -24,9 +27,21 @@ const AwardSection = () => {
             <div className="grid md:grid-cols-2 gap-8 p-8">
               {/* Award Image */}
               <div className="order-2 md:order-1">
-                <div className="overflow-hidden">
-                  <img src="/20150915_preview.jpg" alt="Почетная грамота" width="300" height="425" className="object-cover rounded-md" />
-                </div>
+                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                  <DialogTrigger asChild>
+                    <div className="overflow-hidden cursor-pointer">
+                      <img src="/20150915_preview.jpg" alt="Почетная грамота" width="300" height="425" className="object-cover rounded-md hover:opacity-90 transition-opacity" />
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="w-auto max-w-none p-6">
+                    <DialogHeader>
+                      <DialogTitle>Почетная грамота</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex justify-center">
+                      <img src="/20150915_full.jpg" alt="Полное изображение грамоты" className="max-w-full max-h-[80vh] object-contain" />
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* Award Content */}
