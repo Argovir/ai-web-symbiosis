@@ -15,7 +15,7 @@ const HeroSection = () => {
       {/* Background */}
       <ScrollVideoCanvas />
       {/* Overlay */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-primary/50 via-primary/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/50 via-primary/20 to-transparent" />
 
       {/* Content */}
       <div className="relative container mx-auto px-4 text-center text-white">

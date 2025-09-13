@@ -26,6 +26,7 @@ const Index = () => {
 
     // Observe all sections
     document.querySelectorAll('section[data-animate]').forEach((section) => {
+      section.classList.add('fade-in-up');
       observer.observe(section);
     });
 
