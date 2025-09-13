@@ -106,9 +106,9 @@ const PortfolioSection = () => {
           {/* Projects Grid */}
           <div className="portfolio-grid">
             {filteredProjects.map((project, index) => (
-              <div 
-                key={project.id} 
-                className={`project-card fade-in-up stagger-${(index % 6) + 1}`}
+              <div
+                key={project.id}
+                className={`project-card fade-in-up stagger-${(index % 6) + 1} flex flex-col h-full`}
               >
                 {/* Project Image */}
                 <div className="aspect-video bg-muted rounded-t-2xl overflow-hidden">
@@ -120,11 +120,11 @@ const PortfolioSection = () => {
                 </div>
 
                 {/* Project Content */}
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-grow">
                   <h3 className="text-xl font-semibold font-geist mb-3">
                     {project.title}
                   </h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                  <p className="text-muted-foreground mb-4 leading-relaxed flex-grow">
                     {project.description}
                   </p>
 
@@ -138,10 +138,10 @@ const PortfolioSection = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3">
-                    <Button 
-                      size="sm" 
-                      variant="default" 
+                  <div className="flex gap-3 mt-auto">
+                    <Button
+                      size="sm"
+                      variant="default"
                       className="flex-1 gap-2"
                       asChild
                     >
@@ -150,9 +150,9 @@ const PortfolioSection = () => {
                         Демо
                       </a>
                     </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
+                    <Button
+                      size="sm"
+                      variant="outline"
                       className="gap-2"
                       asChild
                     >

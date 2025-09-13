@@ -69,9 +69,9 @@ const BlogSection = () => {
           {/* Blog Posts Grid */}
           <div className="grid lg:grid-cols-3 gap-8 mb-12">
             {blogPosts.map((post, index) => (
-              <article 
-                key={post.id} 
-                className={`blog-card hover-lift fade-in-up stagger-${index + 1}`}
+              <article
+                key={post.id}
+                className={`blog-card hover-lift fade-in-up stagger-${index + 1} flex flex-col h-full`}
               >
                 {/* Post Image */}
                 <div className="aspect-video bg-muted overflow-hidden">
@@ -83,7 +83,7 @@ const BlogSection = () => {
                 </div>
 
                 {/* Post Content */}
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-grow">
                   {/* Post Meta */}
                   <div className="flex flex-wrap gap-4 items-center text-sm text-muted-foreground mb-4">
                     <div className="flex items-center gap-2">
@@ -115,12 +115,12 @@ const BlogSection = () => {
                   </h3>
 
                   {/* Excerpt */}
-                  <p className="text-muted-foreground mb-6 leading-relaxed">
+                  <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">
                     {post.excerpt}
                   </p>
 
                   {/* Read More */}
-                  <Link to={`/blog/${post.slug}`}>
+                  <Link to={`/blog/${post.slug}`} className="mt-auto">
                     <Button variant="outline" size="sm" className="gap-2 w-full">
                       Читать далее
                       <ArrowRight className="w-4 h-4" />
