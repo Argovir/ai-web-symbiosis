@@ -25,7 +25,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-primary text-white">
+    <footer className="bg-primary relative z-20 text-white">
       {/* Main Footer Content */}
       <div className="container mx-auto px-4 py-16">
         <div className="grid lg:grid-cols-4 gap-8">
@@ -36,7 +36,7 @@ const Footer = () => {
               <span className="text-accent">.AI</span>
             </div>
             <p className="text-white/80 mb-6 leading-relaxed">
-              Веб-мастер с 15-летним опытом. Создаю современные сайты с интеграцией AI-технологий 
+              Веб-мастер с 15-летним опытом. Создаю современные сайты с интеграцией AI-технологий
               для развития вашего бизнеса.
             </p>
             
@@ -96,7 +96,7 @@ const Footer = () => {
             <ul className="space-y-3">
               {services.map((service) => (
                 <li key={service.href}>
-                  <a 
+                  <a
                     href={service.href}
                     className="text-white/80 hover:text-accent transition-colors duration-200"
                   >
@@ -116,7 +116,7 @@ const Footer = () => {
                   <Mail className="w-5 h-5 text-accent" />
                   <span className="font-medium">Email</span>
                 </div>
-                <a 
+                <a
                   href="mailto:contact@example.com"
                   className="text-white/80 hover:text-accent transition-colors duration-200 ml-8"
                 >
@@ -129,7 +129,7 @@ const Footer = () => {
                   <Phone className="w-5 h-5 text-accent" />
                   <span className="font-medium">Телефон</span>
                 </div>
-                <a 
+                <a
                   href="tel:+7900000000"
                   className="text-white/80 hover:text-accent transition-colors duration-200 ml-8"
                 >
@@ -142,7 +142,7 @@ const Footer = () => {
                   <MessageCircle className="w-5 h-5 text-accent" />
                   <span className="font-medium">Telegram</span>
                 </div>
-                <a 
+                <a
                   href="https://t.me/webmaster"
                   target="_blank"
                   rel="noopener noreferrer"
