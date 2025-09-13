@@ -34,7 +34,28 @@ const ScrollAvatarCanvas = ({ className = "" }: { className?: string }) => {
       if (!imagesRef.current[frame]) return;
       const img = imagesRef.current[frame];
       context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Растягиваем по высоте с сохранением пропорций
+      const scale = canvas.height / img.height;
+      const scaledWidth = img.width * scale;
+      const scaledHeight = canvas.height;
+
+      let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+      let dx = 0, dy = 0, dWidth = canvas.width, dHeight = canvas.height;
+
+      if (scaledWidth > canvas.width) {
+        // Обрезаем по ширине, центрируя
+        const excessWidth = scaledWidth - canvas.width;
+        sx = (excessWidth / scale) / 2;
+        sWidth = img.width - (excessWidth / scale);
+        dWidth = canvas.width;
+      } else {
+        // Центрируем по ширине
+        dx = (canvas.width - scaledWidth) / 2;
+        dWidth = scaledWidth;
+      }
+
+      context.drawImage(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
     };
 
     // Загружаем все изображения и запускаем анимацию
@@ -43,8 +64,9 @@ const ScrollAvatarCanvas = ({ className = "" }: { className?: string }) => {
 
       // Устанавливаем размеры canvas
       const canvasSize = Math.min(256, window.innerWidth < 768 ? 128 : 256);
-      canvas.width = canvasSize;
-      canvas.height = canvasSize;
+      const adjustedSize = canvasSize * 1.2 * 1.1;
+      canvas.width = adjustedSize * 1.35 * 1.1;
+      canvas.height = adjustedSize * 1.1;
 
       // Рисуем первый кадр
       drawFrame(0);
@@ -96,12 +118,12 @@ const ScrollAvatarCanvas = ({ className = "" }: { className?: string }) => {
   return (
     <canvas
       ref={canvasRef}
-      className={`rounded-full object-cover border-4 border-white/20 shadow-lg hover:scale-105 transition-transform duration-300 ${className}`}
+      className={`rounded-xl object-cover border-4 border-white/20 shadow-lg hover:scale-105 transition-transform duration-300 ${className}`}
       style={{
         width: "100%",
         height: "100%",
-        maxWidth: "256px",
-        maxHeight: "256px",
+        maxWidth: "502px",
+        maxHeight: "372px",
       }}
     />
   );
