@@ -45,7 +45,7 @@ const Navigation = () => {
   };
   const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const navBackground = isDark
-    ? `rgba(35, 35, 39, ${scrollProgress * 0.95})` // #232327
+    ? `rgba(31, 41, 55, ${scrollProgress * 0.95})` // #1f2937
     : `rgba(255, 255, 255, ${scrollProgress * 0.95})`;
   const textColor = isDark
     ? `rgb(${Math.round(255 - scrollProgress * 64)}, ${Math.round(255 - scrollProgress * 64)}, ${Math.round(255 - scrollProgress * 64)})`
