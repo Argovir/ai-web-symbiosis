@@ -23,7 +23,7 @@ const CTASection = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center md:gap-12">
             <div className="w-full md:w-1/2 text-center md:text-left">
-              <h2 className="text-4xl md:text-5xl font-bold font-geist mb-6 leading-tight">
+              <h2 className="text-4xl md:text-4xl font-bold font-geist mb-6 leading-tight">
                 Готовы создать современный сайт для вашего бизнеса?
               </h2>
               <p className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed">
