@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Code, Brain } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
+import ScrollVideoCanvas from "./ScrollVideoCanvas";
 
 const HeroSection = () => {
   const scrollToSection = (href: string) => {
@@ -13,21 +13,12 @@ const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-primary to-primary/90"
-        style={{
-          backgroundImage: `url(${heroBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundBlendMode: 'multiply'
-        }}
-      />
-      
+      <ScrollVideoCanvas />
       {/* Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/40 to-transparent" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-primary/50 via-primary/20 to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center text-white">
+      <div className="relative container mx-auto px-4 text-center text-white">
         <div className="max-w-5xl mx-auto">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-8 fade-in-up">
