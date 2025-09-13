@@ -4,18 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { 
-  LogOut, 
-  Settings, 
-  FileText, 
-  Folder, 
-  BarChart3, 
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  LogOut,
+  Settings,
+  FileText,
+  Folder,
+  BarChart3,
   User,
   Home,
-  Plus
+  Plus,
+  Sun,
+  Moon,
+  Monitor
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/hooks/useTheme";
 import { SiteSettingsManager } from "@/components/admin/SiteSettingsManager";
 import { PortfolioManager } from "@/components/admin/PortfolioManager";
 import { BlogManager } from "@/components/admin/BlogManager";
@@ -33,6 +38,13 @@ const AdminDashboard = () => {
   });
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
+
+  const getThemeIcon = () => {
+    if (theme === 'light') return <Sun className="w-4 h-4" />;
+    if (theme === 'dark') return <Moon className="w-4 h-4" />;
+    return <Monitor className="w-4 h-4" />;
+  };
 
   useEffect(() => {
     checkUser();
@@ -132,15 +144,36 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm" onClick={() => navigate("/")}>
-                <Home className="w-4 h-4 mr-2" />
-                На сайт
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Выйти
-              </Button>
-            </div>
+               <DropdownMenu>
+                 <DropdownMenuTrigger asChild>
+                   <Button variant="outline" size="sm">
+                     {getThemeIcon()}
+                   </Button>
+                 </DropdownMenuTrigger>
+                 <DropdownMenuContent align="end">
+                   <DropdownMenuItem onClick={() => setTheme('light')}>
+                     <Sun className="w-4 h-4 mr-2" />
+                     Светлая
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setTheme('dark')}>
+                     <Moon className="w-4 h-4 mr-2" />
+                     Тёмная
+                   </DropdownMenuItem>
+                   <DropdownMenuItem onClick={() => setTheme('system')}>
+                     <Monitor className="w-4 h-4 mr-2" />
+                     Системная
+                   </DropdownMenuItem>
+                 </DropdownMenuContent>
+               </DropdownMenu>
+               <Button variant="outline" size="sm" onClick={() => navigate("/")}>
+                 <Home className="w-4 h-4 mr-2" />
+                 На сайт
+               </Button>
+               <Button variant="outline" size="sm" onClick={handleLogout}>
+                 <LogOut className="w-4 h-4 mr-2" />
+                 Выйти
+               </Button>
+             </div>
           </div>
         </div>
       </header>
