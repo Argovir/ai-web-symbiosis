@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2, ExternalLink, Github, Star } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface PortfolioManagerProps {
@@ -63,10 +63,10 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
 
   const loadProjects = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (await supabase
         .from("portfolio_projects")
-        .select("*")
-        .order("sort_order", { ascending: true });
+        .select()
+        .order("sort_order", { ascending: true }))();
 
       if (error) throw error;
       setProjects(data || []);
@@ -84,12 +84,12 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
 
   const handleSave = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const { data: { session } } = await supabase.auth.getSession();
+
       const projectData = {
         ...formData,
         tags: formData.tags.split(",").map(tag => tag.trim()).filter(Boolean),
-        created_by: user?.id,
+        created_by: session?.user?.id,
       };
 
       let result;
@@ -97,11 +97,15 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
         result = await supabase
           .from("portfolio_projects")
           .update(projectData)
-          .eq("id", editingProject.id);
+          .eq("id", editingProject.id)
+          .select()
+          .single();
       } else {
         result = await supabase
           .from("portfolio_projects")
-          .insert([projectData]);
+          .insert([projectData])
+          .select()
+          .single();
       }
 
       if (result.error) throw result.error;
@@ -129,10 +133,10 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
     if (!confirm("Вы уверены, что хотите удалить этот проект?")) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await (await supabase
         .from("portfolio_projects")
         .delete()
-        .eq("id", id);
+        .eq("id", id))();
 
       if (error) throw error;
 

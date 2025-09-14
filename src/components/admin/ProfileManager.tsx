@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Save, Loader2, User, Mail, Shield, Key } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProfileManagerProps {
@@ -15,7 +15,9 @@ interface ProfileManagerProps {
 
 export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
   const [formData, setFormData] = useState({
+    email: profile?.email || "",
     full_name: profile?.full_name || "",
+    role: profile?.role || "admin",
     avatar_url: profile?.avatar_url || "",
     current_password: "",
     new_password: "",
@@ -34,12 +36,26 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
       const { error } = await supabase
         .from("profiles")
         .update({
+          email: formData.email,
           full_name: formData.full_name,
+          role: formData.role,
           avatar_url: formData.avatar_url,
         })
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Update session if email changed
+      if (profile?.email !== formData.email) {
+        const sessionStr = localStorage.getItem('local_auth_session');
+        if (sessionStr) {
+          const session = JSON.parse(sessionStr);
+          session.user.email = formData.email;
+          localStorage.setItem('local_auth_session', JSON.stringify(session));
+        }
+      }
 
       toast({
         title: "Профиль обновлен",
@@ -135,14 +151,12 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
                 <Mail className="w-4 h-4 text-muted-foreground" />
                 <Input
                   id="email"
-                  value={profile?.email || ""}
-                  disabled
-                  className="bg-muted"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="admin@example.com"
                 />
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                Email нельзя изменить
-              </p>
             </div>
             <div>
               <Label htmlFor="full_name">Полное имя</Label>
@@ -163,14 +177,19 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
               />
             </div>
             <div>
-              <Label>Роль</Label>
+              <Label htmlFor="role">Роль</Label>
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-muted-foreground" />
-                <Input
-                  value={profile?.role || "admin"}
-                  disabled
-                  className="bg-muted"
-                />
+                <select
+                  id="role"
+                  value={formData.role}
+                  onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="admin">Администратор</option>
+                  <option value="editor">Редактор</option>
+                  <option value="user">Пользователь</option>
+                </select>
               </div>
             </div>
             <Button onClick={handleSaveProfile} disabled={saving}>

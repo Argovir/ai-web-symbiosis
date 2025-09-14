@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2, Eye, Calendar } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface BlogManagerProps {
@@ -68,10 +68,10 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
 
   const loadPosts = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (await supabase
         .from("blog_posts")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select()
+        .order("created_at", { ascending: false }))();
 
       if (error) throw error;
       setPosts(data || []);
@@ -106,18 +106,18 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
 
   const handleSave = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const { data: { session } } = await supabase.auth.getSession();
+
       // Generate slug if not provided
       const slug = formData.slug || generateSlug(formData.title);
-      
+
       const postData = {
         ...formData,
         slug,
         tags: formData.tags.split(",").map(tag => tag.trim()).filter(Boolean),
-        author_id: user?.id,
-        published_at: formData.status === "published" && !editingPost?.published_at 
-          ? new Date().toISOString() 
+        author_id: session?.user?.id,
+        published_at: formData.status === "published" && !editingPost?.published_at
+          ? new Date().toISOString()
           : editingPost?.published_at
       };
 
@@ -126,11 +126,15 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
         result = await supabase
           .from("blog_posts")
           .update(postData)
-          .eq("id", editingPost.id);
+          .eq("id", editingPost.id)
+          .select()
+          .single();
       } else {
         result = await supabase
           .from("blog_posts")
-          .insert([postData]);
+          .insert([postData])
+          .select()
+          .single();
       }
 
       if (result.error) throw result.error;
@@ -158,10 +162,10 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
     if (!confirm("Вы уверены, что хотите удалить эту статью?")) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await (await supabase
         .from("blog_posts")
         .delete()
-        .eq("id", id);
+        .eq("id", id))();
 
       if (error) throw error;
 

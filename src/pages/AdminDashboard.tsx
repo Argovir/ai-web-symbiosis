@@ -18,7 +18,7 @@ import {
   Moon,
   Monitor
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/hooks/useTheme";
 import { SiteSettingsManager } from "@/components/admin/SiteSettingsManager";
@@ -80,16 +80,16 @@ const AdminDashboard = () => {
   const loadStats = async () => {
     try {
       const [projectsRes, postsRes] = await Promise.all([
-        supabase.from("portfolio_projects").select("id", { count: "exact" }),
-        supabase.from("blog_posts").select("id, status", { count: "exact" })
+        supabase.from("portfolio_projects").select(),
+        supabase.from("blog_posts").select()
       ]);
 
       const publishedPosts = postsRes.data?.filter(p => p.status === "published").length || 0;
       const draftPosts = postsRes.data?.filter(p => p.status === "draft").length || 0;
 
       setStats({
-        projects: projectsRes.count || 0,
-        posts: postsRes.count || 0,
+        projects: projectsRes.data?.length || 0,
+        posts: postsRes.data?.length || 0,
         publishedPosts,
         draftPosts
       });

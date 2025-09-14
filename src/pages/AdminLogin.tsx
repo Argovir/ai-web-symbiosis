@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Lock, Mail } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminLogin = () => {
@@ -14,6 +14,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [currentAdmin, setCurrentAdmin] = useState<any>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -26,6 +27,18 @@ const AdminLogin = () => {
       }
     };
     checkUser();
+
+    // Load current admin credentials for display
+    const loadAdmin = async () => {
+      try {
+        const { data } = await supabase.from("profiles").select();
+        const admin = data?.find((p: any) => p.role === 'admin');
+        setCurrentAdmin(admin);
+      } catch (err) {
+        console.error("Error loading admin:", err);
+      }
+    };
+    loadAdmin();
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -44,7 +57,7 @@ const AdminLogin = () => {
         return;
       }
 
-      if (data.user) {
+      if (data.session) {
         toast({
           title: "Успешный вход",
           description: "Добро пожаловать в админ панель!",
@@ -52,7 +65,8 @@ const AdminLogin = () => {
         navigate("/admin");
       }
     } catch (err) {
-      setError("Произошла ошибка при входе");
+      console.error("Login error:", err);
+      setError(`Произошла ошибка при входе: ${err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -120,6 +134,16 @@ const AdminLogin = () => {
               )}
             </Button>
           </form>
+
+          {currentAdmin && (
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                Текущие данные администратора:<br/>
+                Email: {currentAdmin.email}<br/>
+                Пароль: {currentAdmin.password ? '********' : 'не установлен'}
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

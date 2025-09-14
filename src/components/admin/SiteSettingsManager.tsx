@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Save, Loader2, Home, Mail, Phone, Github, Linkedin, Send } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface SiteSettingsManagerProps {
@@ -66,7 +66,9 @@ export const SiteSettingsManager = ({ onUpdate }: SiteSettingsManagerProps) => {
         result = await supabase
           .from("site_settings")
           .update(updateData)
-          .eq("id", settings.id);
+          .eq("id", settings.id)
+          .select()
+          .single();
       } else {
         // Insert new
         result = await supabase
@@ -74,7 +76,7 @@ export const SiteSettingsManager = ({ onUpdate }: SiteSettingsManagerProps) => {
           .insert([updateData])
           .select()
           .single();
-        
+
         if (result.data) {
           setSettings(result.data);
         }

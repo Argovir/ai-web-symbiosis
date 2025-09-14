@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github, Filter } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/api/client";
 
 interface Project {
   id: string;
@@ -42,7 +42,7 @@ const PortfolioSection = () => {
     try {
       const { data, error } = await supabase
         .from("site_settings")
-        .select("portfolio_title, portfolio_description, portfolio_columns")
+        .select()
         .limit(1)
         .single();
 
@@ -51,7 +51,12 @@ const PortfolioSection = () => {
       }
 
       if (data) {
-        setSettings(data);
+        // Map existing fields or use defaults
+        setSettings({
+          portfolio_title: data.hero_title || "Портфолио",
+          portfolio_description: data.hero_description || "Избранные проекты: от классических сайтов до AI-интеграций",
+          portfolio_columns: 3 // Default, since not in schema
+        });
       } else {
         // Default settings
         setSettings({
@@ -76,13 +81,13 @@ const PortfolioSection = () => {
       setLoading(true);
       setError(null);
 
-      const { data, error: supabaseError } = await supabase
+      const { data, error } = await (await supabase
         .from("portfolio_projects")
-        .select("*")
+        .select()
         .eq("is_published", true)
-        .order("sort_order", { ascending: true });
+        .order("sort_order"))();
 
-      if (supabaseError) throw supabaseError;
+      if (error) throw error;
 
       // Fallback data for testing styles if no projects in database
       const fallbackProjects = data && data.length > 0 ? data : [
