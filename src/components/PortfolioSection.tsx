@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github, Filter } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
 
 interface Project {
   id: string;
@@ -40,25 +39,27 @@ const PortfolioSection = () => {
 
   const loadSettings = async () => {
     try {
-      const { data, error } = await supabase
-        .from("site_settings")
-        .select()
-        .limit(1)
-        .single();
+      const response = await fetch('http://localhost:3001/api/site-settings');
 
-      if (error && error.code !== "PGRST116") {
-        console.error("Error loading settings:", error);
-      }
-
-      if (data) {
-        // Map existing fields or use defaults
-        setSettings({
-          portfolio_title: data.hero_title || "Портфолио",
-          portfolio_description: data.hero_description || "Избранные проекты: от классических сайтов до AI-интеграций",
-          portfolio_columns: 3 // Default, since not in schema
-        });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          const settingsData = data.data[0];
+          setSettings({
+            portfolio_title: settingsData.portfolio_title || settingsData.hero_title || "Портфолио",
+            portfolio_description: settingsData.portfolio_description || settingsData.hero_description || "Избранные проекты: от классических сайтов до AI-интеграций",
+            portfolio_columns: settingsData.portfolio_columns || 3
+          });
+        } else {
+          // Default settings
+          setSettings({
+            portfolio_title: "Портфолио",
+            portfolio_description: "Избранные проекты: от классических сайтов до AI-интеграций",
+            portfolio_columns: 3
+          });
+        }
       } else {
-        // Default settings
+        // Use defaults on error
         setSettings({
           portfolio_title: "Портфолио",
           portfolio_description: "Избранные проекты: от классических сайтов до AI-интеграций",
@@ -81,50 +82,19 @@ const PortfolioSection = () => {
       setLoading(true);
       setError(null);
 
-      const { data, error } = await (await supabase
-        .from("portfolio_projects")
-        .select()
-        .eq("is_published", true)
-        .order("sort_order"))();
+      const response = await fetch('http://localhost:3001/api/portfolio-projects');
 
-      if (error) throw error;
-
-      // Fallback data for testing styles if no projects in database
-      const fallbackProjects = data && data.length > 0 ? data : [
-        {
-          id: "1",
-          title: "AI-Помощник для E-commerce",
-          description: "Интеллектуальный чат-бот с интеграцией GPT-4 для консультации покупателей",
-          image_url: "/placeholder.svg",
-          category: "ai" as const,
-          tags: ["React", "OpenAI API", "Node.js"],
-          live_url: "#",
-          github_url: "#",
-          featured: true,
-          sort_order: 10,
-          is_published: true,
-          created_at: new Date().toISOString()
-        },
-        {
-          id: "2",
-          title: "Корпоративный сайт с CMS",
-          description: "Современный корпоративный сайт с кастомной CMS и высокой производительностью",
-          image_url: "/placeholder.svg",
-          category: "classic" as const,
-          tags: ["WordPress", "PHP", "MySQL"],
-          live_url: "#",
-          github_url: "#",
-          featured: true,
-          sort_order: 20,
-          is_published: true,
-          created_at: new Date().toISOString()
-        }
-      ];
-
-      setProjects(fallbackProjects);
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data.data || []);
+      } else {
+        throw new Error('Failed to fetch projects');
+      }
     } catch (err) {
       console.error("Error loading projects:", err);
       setError("Не удалось загрузить проекты");
+      // Set empty array on error to prevent fallback data
+      setProjects([]);
     } finally {
       setLoading(false);
     }

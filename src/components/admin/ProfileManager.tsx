@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Save, Loader2, User, Mail, Shield, Key } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface ProfileManagerProps {
@@ -30,32 +29,24 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error("No token found");
 
-      const { error } = await supabase
-        .from("profiles")
-        .update({
+      const response = await fetch(`http://localhost:3001/api/profiles/${profile?.user_id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
           email: formData.email,
           full_name: formData.full_name,
           role: formData.role,
           avatar_url: formData.avatar_url,
         })
-        .eq("user_id", user.id)
-        .select()
-        .single();
+      });
 
-      if (error) throw error;
-
-      // Update session if email changed
-      if (profile?.email !== formData.email) {
-        const sessionStr = localStorage.getItem('local_auth_session');
-        if (sessionStr) {
-          const session = JSON.parse(sessionStr);
-          session.user.email = formData.email;
-          localStorage.setItem('local_auth_session', JSON.stringify(session));
-        }
-      }
+      if (!response.ok) throw new Error('Failed to update profile');
 
       toast({
         title: "Профиль обновлен",
@@ -96,11 +87,20 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
 
     setChangingPassword(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: formData.new_password
+      const token = localStorage.getItem('token');
+
+      const response = await fetch('http://localhost:3001/api/auth/update-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          password: formData.new_password
+        })
       });
 
-      if (error) throw error;
+      if (!response.ok) throw new Error('Failed to update password');
 
       setFormData(prev => ({
         ...prev,

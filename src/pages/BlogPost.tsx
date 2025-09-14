@@ -1,35 +1,76 @@
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
 
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  image_url?: string;
+  status: string;
+  tags: string[];
+  meta_title?: string;
+  meta_description?: string;
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+  author_id?: string;
+}
+
 const BlogPost = () => {
   const { slug } = useParams();
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Временные данные для демонстрации
-  const post = {
-    title: "Интеграция AI в веб-разработку: практические решения",
-    content: `
-      <p>В современном мире веб-разработки интеграция искусственного интеллекта становится не просто трендом, а необходимостью. За 15 лет работы в сфере веб-технологий я прошел путь от простой верстки до создания интеллектуальных веб-приложений.</p>
-      
-      <h2>Основные направления AI в веб-разработке</h2>
-      
-      <h3>1. Персонализация контента</h3>
-      <p>Современные алгоритмы машинного обучения позволяют создавать персонализированный пользовательский опыт. Это касается как контента, так и интерфейса.</p>
-      
-      <h3>2. Чат-боты и виртуальные ассистенты</h3>
-      <p>Интеграция GPT-моделей в веб-приложения открывает новые возможности для взаимодействия с пользователями.</p>
-      
-      <h3>3. Автоматизация контента</h3>
-      <p>Генерация текстов, изображений и даже кода с помощью AI становится все более качественной и доступной.</p>
-      
-      <p>В следующих статьях я поделюсь конкретными кейсами и код-примерами интеграции AI в веб-проекты.</p>
-    `,
-    date: "2024-01-15",
-    author: "Веб-мастер",
-    category: "Нейросети",
-    image: "/placeholder.svg"
-  };
+  useEffect(() => {
+    const fetchBlogPost = async () => {
+      try {
+        // Сначала получаем все опубликованные статьи, затем находим нужную по slug
+        const response = await fetch('http://localhost:3001/api/blog-posts');
+        if (response.ok) {
+          const data = await response.json();
+          const posts = data.data || [];
+          const foundPost = posts.find((p: BlogPost) => p.slug === slug);
+          setPost(foundPost || null);
+        } else {
+          console.error('Failed to fetch blog posts');
+        }
+      } catch (error) {
+        console.error('Error fetching blog post:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (slug) {
+      fetchBlogPost();
+    }
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Статья не найдена</h1>
+          <Link to="/#blog">
+            <Button>Вернуться к блогу</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,15 +94,15 @@ const BlogPost = () => {
             <div className="flex flex-wrap gap-4 items-center text-sm text-muted-foreground mb-6">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                <span>{new Date(post.date).toLocaleDateString('ru-RU')}</span>
+                <span>{new Date(post.published_at || post.created_at).toLocaleDateString('ru-RU')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" />
-                <span>{post.author}</span>
+                <span>Веб-мастер</span>
               </div>
               <div className="flex items-center gap-2">
                 <Tag className="w-4 h-4" />
-                <span className="tech-tag">{post.category}</span>
+                <span className="tech-tag">{post.tags.length > 0 ? post.tags[0] : 'Блог'}</span>
               </div>
             </div>
             
@@ -70,8 +111,8 @@ const BlogPost = () => {
             </h1>
             
             <div className="aspect-video bg-muted rounded-2xl overflow-hidden mb-8">
-              <img 
-                src={post.image} 
+              <img
+                src={post.image_url || "/placeholder.svg"}
                 alt={post.title}
                 className="w-full h-full object-cover"
               />

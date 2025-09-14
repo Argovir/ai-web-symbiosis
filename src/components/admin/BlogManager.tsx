@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2, Eye, Calendar } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface BlogManagerProps {
@@ -68,13 +67,29 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
 
   const loadPosts = async () => {
     try {
-      const { data, error } = await (await supabase
-        .from("blog_posts")
-        .select()
-        .order("created_at", { ascending: false }))();
+      const token = localStorage.getItem('token');
+      console.log('Token found:', !!token); // Для диагностики
 
-      if (error) throw error;
-      setPosts(data || []);
+      const response = await fetch('http://localhost:3001/api/admin/blog-posts', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log('Response status:', response.status); // Для диагностики
+
+      if (response.ok) {
+        const data = await response.json();
+        setPosts(data.data || []);
+      } else if (response.status === 401 || response.status === 403) {
+        toast({
+          title: "Ошибка авторизации",
+          description: "Необходимо войти в систему заново",
+          variant: "destructive",
+        });
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
     } catch (error) {
       console.error("Error loading posts:", error);
       toast({
@@ -106,8 +121,6 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
 
   const handleSave = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-
       // Generate slug if not provided
       const slug = formData.slug || generateSlug(formData.title);
 
@@ -115,39 +128,39 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
         ...formData,
         slug,
         tags: formData.tags.split(",").map(tag => tag.trim()).filter(Boolean),
-        author_id: session?.user?.id,
         published_at: formData.status === "published" && !editingPost?.published_at
           ? new Date().toISOString()
           : editingPost?.published_at
       };
 
-      let result;
-      if (editingPost) {
-        result = await supabase
-          .from("blog_posts")
-          .update(postData)
-          .eq("id", editingPost.id)
-          .select()
-          .single();
-      } else {
-        result = await supabase
-          .from("blog_posts")
-          .insert([postData])
-          .select()
-          .single();
-      }
+      const method = editingPost ? 'PATCH' : 'POST';
+      const url = editingPost
+        ? `http://localhost:3001/api/admin/blog-posts/${editingPost.id}`
+        : 'http://localhost:3001/api/admin/blog-posts';
 
-      if (result.error) throw result.error;
-
-      toast({
-        title: "Успешно сохранено",
-        description: editingPost ? "Статья обновлена" : "Статья создана",
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(postData)
       });
 
-      setDialogOpen(false);
-      resetForm();
-      loadPosts();
-      onUpdate?.();
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "Успешно сохранено",
+          description: editingPost ? "Статья обновлена" : "Статья создана",
+        });
+
+        setDialogOpen(false);
+        resetForm();
+        loadPosts();
+        onUpdate?.();
+      } else {
+        throw new Error('Failed to save post');
+      }
     } catch (error) {
       console.error("Error saving post:", error);
       toast({
@@ -162,20 +175,24 @@ export const BlogManager = ({ onUpdate }: BlogManagerProps) => {
     if (!confirm("Вы уверены, что хотите удалить эту статью?")) return;
 
     try {
-      const { error } = await (await supabase
-        .from("blog_posts")
-        .delete()
-        .eq("id", id))();
-
-      if (error) throw error;
-
-      toast({
-        title: "Статья удалена",
-        description: "Статья успешно удалена",
+      const response = await fetch(`http://localhost:3001/api/admin/blog-posts/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
 
-      loadPosts();
-      onUpdate?.();
+      if (response.ok) {
+        toast({
+          title: "Статья удалена",
+          description: "Статья успешно удалена",
+        });
+
+        loadPosts();
+        onUpdate?.();
+      } else {
+        throw new Error('Failed to delete post');
+      }
     } catch (error) {
       console.error("Error deleting post:", error);
       toast({

@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Save, Loader2, Home, Mail, Phone, Github, Linkedin, Send } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface SiteSettingsManagerProps {
@@ -25,18 +24,15 @@ export const SiteSettingsManager = ({ onUpdate }: SiteSettingsManagerProps) => {
 
   const loadSettings = async () => {
     try {
-      const { data, error } = await supabase
-        .from("site_settings")
-        .select("*")
-        .limit(1)
-        .single();
+      const response = await fetch('http://localhost:3001/api/site-settings');
 
-      if (error && error.code !== "PGRST116") {
-        throw error;
-      }
-
-      if (data) {
-        setSettings(data);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && data.data.length > 0) {
+          setSettings(data.data[0]);
+        }
+      } else {
+        throw new Error('Failed to fetch settings');
       }
     } catch (error) {
       console.error("Error loading settings:", error);
@@ -53,45 +49,36 @@ export const SiteSettingsManager = ({ onUpdate }: SiteSettingsManagerProps) => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      const updateData = {
-        ...settings,
-        updated_by: user?.id,
-      };
+      const token = localStorage.getItem('token');
+      const method = settings.id ? 'PATCH' : 'POST';
+      const url = settings.id
+        ? `http://localhost:3001/api/site-settings/${settings.id}`
+        : 'http://localhost:3001/api/site-settings';
 
-      let result;
-      if (settings.id) {
-        // Update existing
-        result = await supabase
-          .from("site_settings")
-          .update(updateData)
-          .eq("id", settings.id)
-          .select()
-          .single();
-      } else {
-        // Insert new
-        result = await supabase
-          .from("site_settings")
-          .insert([updateData])
-          .select()
-          .single();
-
-        if (result.data) {
-          setSettings(result.data);
-        }
-      }
-
-      if (result.error) {
-        throw result.error;
-      }
-
-      toast({
-        title: "Успешно сохранено",
-        description: "Настройки сайта обновлены",
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(settings)
       });
 
-      onUpdate?.();
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data) {
+          setSettings(data.data);
+        }
+
+        toast({
+          title: "Успешно сохранено",
+          description: "Настройки сайта обновлены",
+        });
+
+        onUpdate?.();
+      } else {
+        throw new Error('Failed to save settings');
+      }
     } catch (error) {
       console.error("Error saving settings:", error);
       toast({

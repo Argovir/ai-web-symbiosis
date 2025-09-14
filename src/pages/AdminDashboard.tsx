@@ -18,7 +18,6 @@ import {
   Moon,
   Monitor
 } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/hooks/useTheme";
 import { SiteSettingsManager } from "@/components/admin/SiteSettingsManager";
@@ -53,23 +52,28 @@ const AdminDashboard = () => {
 
   const checkUser = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
         navigate("/admin/login");
         return;
       }
 
-      setUser(session.user);
+      // Decode token to get user info
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      setUser({ email: payload.email, id: payload.id });
 
-      // Get user profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .single();
+      // Get user profile via API
+      const response = await fetch('http://localhost:3001/api/profiles', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
 
-      setProfile(profileData);
+      if (response.ok) {
+        const data = await response.json();
+        setProfile(data.data);
+      }
     } catch (error) {
       console.error("Error checking user:", error);
     } finally {
@@ -79,20 +83,31 @@ const AdminDashboard = () => {
 
   const loadStats = async () => {
     try {
+      const token = localStorage.getItem('token');
+
       const [projectsRes, postsRes] = await Promise.all([
-        supabase.from("portfolio_projects").select(),
-        supabase.from("blog_posts").select()
+        fetch('http://localhost:3001/api/admin/portfolio-projects', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        fetch('http://localhost:3001/api/admin/blog-posts', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
       ]);
 
-      const publishedPosts = postsRes.data?.filter(p => p.status === "published").length || 0;
-      const draftPosts = postsRes.data?.filter(p => p.status === "draft").length || 0;
+      if (projectsRes.ok && postsRes.ok) {
+        const projectsData = await projectsRes.json();
+        const postsData = await postsRes.json();
 
-      setStats({
-        projects: projectsRes.data?.length || 0,
-        posts: postsRes.data?.length || 0,
-        publishedPosts,
-        draftPosts
-      });
+        const publishedPosts = postsData.data?.filter((p: any) => p.status === "published").length || 0;
+        const draftPosts = postsData.data?.filter((p: any) => p.status === "draft").length || 0;
+
+        setStats({
+          projects: projectsData.data?.length || 0,
+          posts: postsData.data?.length || 0,
+          publishedPosts,
+          draftPosts
+        });
+      }
     } catch (error) {
       console.error("Error loading stats:", error);
     }
@@ -100,7 +115,9 @@ const AdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      // Clear token from localStorage
+      localStorage.removeItem('token');
+
       toast({
         title: "Выход выполнен",
         description: "До свидания!",

@@ -15,13 +15,13 @@ const pool = new Pool({
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:5173', 'http://localhost:3000'],
+  origin: ['http://localhost:8080', 'http://localhost:3000', 'http://localhost:5173'],
   credentials: true
 }));
 
 // CSP headers
 app.use((req, res, next) => {
-  res.setHeader('Content-Security-Policy', "default-src 'self' http://localhost:8080 http://localhost:5173 http://localhost:3000; img-src 'self' http://localhost:8080 http://localhost:5173 http://localhost:3000 data: blob:; script-src 'self' http://localhost:8080 http://localhost:5173 http://localhost:3000; style-src 'self' http://localhost:8080 http://localhost:5173 http://localhost:3000 'unsafe-inline'");
+  res.setHeader('Content-Security-Policy', "default-src 'self' http://localhost:8080 http://localhost:3000 http://localhost:5173; img-src 'self' http://localhost:8080 http://localhost:3000 http://localhost:5173 data: blob:; script-src 'self' http://localhost:8080 http://localhost:3000 http://localhost:5173; style-src 'self' http://localhost:8080 http://localhost:3000 http://localhost:5173 'unsafe-inline'");
   next();
 });
 
@@ -135,13 +135,23 @@ app.patch('/api/site-settings/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const fields = Object.keys(updates).map((key, index) => `${key} = $${index + 2}`).join(', ');
-    const values = Object.values(updates);
+    // Build dynamic update query
+    const fields = Object.keys(updates);
+    if (fields.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+    const values = fields.map(field => updates[field]);
 
     const result = await pool.query(
-      `UPDATE site_settings SET ${fields}, updated_at = NOW(), updated_by = $${values.length + 1} WHERE id = $${values.length + 2} RETURNING *`,
+      `UPDATE site_settings SET ${setClause}, updated_at = NOW(), updated_by = $${values.length + 1} WHERE id = $${values.length + 2} RETURNING *`,
       [...values, req.user.id, id]
     );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Site settings not found' });
+    }
 
     res.json({ data: result.rows[0], error: null });
   } catch (error) {
@@ -195,13 +205,23 @@ app.patch('/api/admin/portfolio-projects/:id', authenticateToken, async (req, re
     const { id } = req.params;
     const updates = req.body;
 
-    const fields = Object.keys(updates).map((key, index) => `${key} = $${index + 2}`).join(', ');
-    const values = Object.values(updates);
+    // Build dynamic update query
+    const fields = Object.keys(updates);
+    if (fields.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+    const values = fields.map(field => updates[field]);
 
     const result = await pool.query(
-      `UPDATE portfolio_projects SET ${fields}, updated_at = NOW() WHERE id = $${values.length + 1} RETURNING *`,
+      `UPDATE portfolio_projects SET ${setClause}, updated_at = NOW() WHERE id = $${values.length + 1} RETURNING *`,
       [...values, id]
     );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
 
     res.json({ data: result.rows[0], error: null });
   } catch (error) {
@@ -266,13 +286,23 @@ app.patch('/api/admin/blog-posts/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const fields = Object.keys(updates).map((key, index) => `${key} = $${index + 2}`).join(', ');
-    const values = Object.values(updates);
+    // Build dynamic update query
+    const fields = Object.keys(updates);
+    if (fields.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+    const values = fields.map(field => updates[field]);
 
     const result = await pool.query(
-      `UPDATE blog_posts SET ${fields}, updated_at = NOW() WHERE id = $${values.length + 1} RETURNING *`,
+      `UPDATE blog_posts SET ${setClause}, updated_at = NOW() WHERE id = $${values.length + 1} RETURNING *`,
       [...values, id]
     );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Blog post not found' });
+    }
 
     res.json({ data: result.rows[0], error: null });
   } catch (error) {

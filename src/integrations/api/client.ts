@@ -191,10 +191,12 @@ export const db = {
       eq: (column: string, value: any) => ({
         single: async () => {
           try {
+            const hasToken = !!localStorage.getItem('auth_token');
+            const isAdminPage = window.location.pathname.startsWith('/admin');
             const endpoint = table === 'profiles' ? `/profiles` :
                            table === 'site_settings' ? `/site-settings` :
-                           table === 'portfolio_projects' ? `/portfolio-projects` :
-                           table === 'blog_posts' ? `/blog-posts` : `/${table}`;
+                           table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
+                           table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
             const result = await apiCall(endpoint);
             const item = result.data.find((item: any) => item[column] === value);
             return { data: item || null, error: null };
@@ -204,10 +206,12 @@ export const db = {
         },
         order: (orderBy: string, opts?: { ascending?: boolean }) => async () => {
           try {
+            const hasToken = !!localStorage.getItem('auth_token');
+            const isAdminPage = window.location.pathname.startsWith('/admin');
             const endpoint = table === 'profiles' ? `/profiles` :
                            table === 'site_settings' ? `/site-settings` :
-                           table === 'portfolio_projects' ? `/portfolio-projects` :
-                           table === 'blog_posts' ? `/blog-posts` : `/${table}`;
+                           table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
+                           table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
             const result = await apiCall(endpoint);
             let data = result.data;
             data.sort((a: any, b: any) => {
@@ -226,10 +230,12 @@ export const db = {
       }),
       order: (orderBy: string, opts?: { ascending?: boolean }) => async () => {
         try {
+          const hasToken = !!localStorage.getItem('auth_token');
+          const isAdminPage = window.location.pathname.startsWith('/admin');
           const endpoint = table === 'profiles' ? `/profiles` :
                          table === 'site_settings' ? `/site-settings` :
-                         table === 'portfolio_projects' ? `/portfolio-projects` :
-                         table === 'blog_posts' ? `/blog-posts` : `/${table}`;
+                         table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
+                         table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
           const result = await apiCall(endpoint);
           let data = result.data;
           data.sort((a: any, b: any) => {
@@ -248,10 +254,12 @@ export const db = {
       limit: (limit: number) => ({
         single: async () => {
           try {
+            const hasToken = !!localStorage.getItem('auth_token');
+            const isAdminPage = window.location.pathname.startsWith('/admin');
             const endpoint = table === 'profiles' ? `/profiles` :
                            table === 'site_settings' ? `/site-settings` :
-                           table === 'portfolio_projects' ? `/portfolio-projects` :
-                           table === 'blog_posts' ? `/blog-posts` : `/${table}`;
+                           table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
+                           table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
             const result = await apiCall(endpoint);
             return { data: result.data[0] || null, error: null };
           } catch (error) {
@@ -261,10 +269,12 @@ export const db = {
       }),
       single: async () => {
         try {
+          const hasToken = !!localStorage.getItem('auth_token');
+          const isAdminPage = window.location.pathname.startsWith('/admin');
           const endpoint = table === 'profiles' ? `/profiles` :
                          table === 'site_settings' ? `/site-settings` :
-                         table === 'portfolio_projects' ? `/portfolio-projects` :
-                         table === 'blog_posts' ? `/blog-posts` : `/${table}`;
+                         table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
+                         table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
           const result = await apiCall(endpoint);
           return { data: result.data[0] || null, error: null };
         } catch (error) {
@@ -273,10 +283,12 @@ export const db = {
       },
       async then(callback: (result: { data: any[]; error: any }) => void) {
         try {
+          const hasToken = !!localStorage.getItem('auth_token');
+          const isAdminPage = window.location.pathname.startsWith('/admin');
           const endpoint = table === 'profiles' ? `/profiles` :
                          table === 'site_settings' ? `/site-settings` :
-                         table === 'portfolio_projects' ? `/portfolio-projects` :
-                         table === 'blog_posts' ? `/blog-posts` : `/${table}`;
+                         table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
+                         table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
           const result = await apiCall(endpoint);
           callback({ data: result.data, error: null });
         } catch (error) {

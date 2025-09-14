@@ -10,7 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2, ExternalLink, Github, Star } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface PortfolioManagerProps {
@@ -43,6 +42,7 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "hidden">("all");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -63,13 +63,29 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
 
   const loadProjects = async () => {
     try {
-      const { data, error } = await (await supabase
-        .from("portfolio_projects")
-        .select()
-        .order("sort_order", { ascending: true }))();
+      const token = localStorage.getItem('token');
+      console.log('Token found:', !!token); // Для диагностики
 
-      if (error) throw error;
-      setProjects(data || []);
+      const response = await fetch('http://localhost:3001/api/admin/portfolio-projects', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log('Response status:', response.status); // Для диагностики
+
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data.data || []);
+      } else if (response.status === 401 || response.status === 403) {
+        toast({
+          title: "Ошибка авторизации",
+          description: "Необходимо войти в систему заново",
+          variant: "destructive",
+        });
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
     } catch (error) {
       console.error("Error loading projects:", error);
       toast({
@@ -82,43 +98,56 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
     }
   };
 
+  const filteredProjects = projects.filter(project => {
+    const result = (() => {
+      switch (statusFilter) {
+        case "published":
+          return project.is_published;
+        case "hidden":
+          return !project.is_published;
+        default:
+          return true;
+      }
+    })();
+    console.log(`Filtering project ${project.id} (${project.title}): filter=${statusFilter}, is_published=${project.is_published}, result=${result}`);
+    return result;
+  });
+
   const handleSave = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-
       const projectData = {
         ...formData,
         tags: formData.tags.split(",").map(tag => tag.trim()).filter(Boolean),
-        created_by: session?.user?.id,
       };
 
-      let result;
-      if (editingProject) {
-        result = await supabase
-          .from("portfolio_projects")
-          .update(projectData)
-          .eq("id", editingProject.id)
-          .select()
-          .single();
-      } else {
-        result = await supabase
-          .from("portfolio_projects")
-          .insert([projectData])
-          .select()
-          .single();
-      }
+      const method = editingProject ? 'PATCH' : 'POST';
+      const url = editingProject
+        ? `http://localhost:3001/api/admin/portfolio-projects/${editingProject.id}`
+        : 'http://localhost:3001/api/admin/portfolio-projects';
 
-      if (result.error) throw result.error;
-
-      toast({
-        title: "Успешно сохранено",
-        description: editingProject ? "Проект обновлен" : "Проект создан",
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(projectData)
       });
 
-      setDialogOpen(false);
-      resetForm();
-      loadProjects();
-      onUpdate?.();
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "Успешно сохранено",
+          description: editingProject ? "Проект обновлен" : "Проект создан",
+        });
+
+        setDialogOpen(false);
+        resetForm();
+        loadProjects();
+        onUpdate?.();
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
     } catch (error) {
       console.error("Error saving project:", error);
       toast({
@@ -133,25 +162,62 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
     if (!confirm("Вы уверены, что хотите удалить этот проект?")) return;
 
     try {
-      const { error } = await (await supabase
-        .from("portfolio_projects")
-        .delete()
-        .eq("id", id))();
-
-      if (error) throw error;
-
-      toast({
-        title: "Проект удален",
-        description: "Проект успешно удален",
+      const response = await fetch(`http://localhost:3001/api/admin/portfolio-projects/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
 
-      loadProjects();
-      onUpdate?.();
+      if (response.ok) {
+        toast({
+          title: "Проект удален",
+          description: "Проект успешно удален",
+        });
+
+        loadProjects();
+        onUpdate?.();
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
     } catch (error) {
       console.error("Error deleting project:", error);
       toast({
         title: "Ошибка",
         description: "Не удалось удалить проект",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleTogglePublish = async (id: string, isPublished: boolean) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/admin/portfolio-projects/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ is_published: isPublished })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "Статус обновлен",
+          description: `Проект ${isPublished ? "опубликован" : "скрыт"}`,
+        });
+
+        loadProjects();
+        onUpdate?.();
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Error updating project status:", error);
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обновить статус проекта",
         variant: "destructive",
       });
     }
@@ -208,16 +274,32 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold font-geist">Управление портфолио</h2>
-          <p className="text-muted-foreground">Добавляйте и редактируйте проекты</p>
+          <p className="text-muted-foreground">
+            Добавляйте и редактируйте проекты. Все проекты отображаются независимо от статуса публикации.
+          </p>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleNewProject}>
-              <Plus className="w-4 h-4 mr-2" />
-              Добавить проект
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <div className="flex gap-4">
+          <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Все проекты</SelectItem>
+              <SelectItem value="published">Только опубликованные</SelectItem>
+              <SelectItem value="hidden">Только скрытые</SelectItem>
+            </SelectContent>
+          </Select>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleNewProject}>
+                <Plus className="w-4 h-4 mr-2" />
+                Добавить проект
+              </Button>
+            </DialogTrigger>
+            </Dialog>
+          </div>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingProject ? "Редактировать проект" : "Новый проект"}
@@ -340,9 +422,13 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Проекты ({projects.length})</CardTitle>
+          <CardTitle>
+            Проекты ({filteredProjects.length}{statusFilter !== "all" ? ` из ${projects.length}` : ""})
+          </CardTitle>
           <CardDescription>
-            Список всех проектов в портфолио
+            {statusFilter === "all" ? "Список всех проектов в портфолио" :
+             statusFilter === "published" ? "Показаны только опубликованные проекты" :
+             "Показаны только скрытые проекты"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -357,7 +443,7 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {projects.map((project) => (
+              {filteredProjects.map((project) => (
                 <TableRow key={project.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -405,6 +491,10 @@ export const PortfolioManager = ({ onUpdate }: PortfolioManagerProps) => {
                           </a>
                         </Button>
                       )}
+                      <Switch
+                        checked={project.is_published}
+                        onCheckedChange={(checked) => handleTogglePublish(project.id, checked)}
+                      />
                       <Button variant="ghost" size="sm" onClick={() => handleEdit(project)}>
                         <Edit className="w-4 h-4" />
                       </Button>

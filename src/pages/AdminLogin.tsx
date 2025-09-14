@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Lock, Mail } from "lucide-react";
-import { supabase } from "@/integrations/api/client";
 import { useToast } from "@/hooks/use-toast";
 
 const AdminLogin = () => {
@@ -14,31 +13,15 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [currentAdmin, setCurrentAdmin] = useState<any>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     // Check if user is already logged in
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate("/admin");
-      }
-    };
-    checkUser();
-
-    // Load current admin credentials for display
-    const loadAdmin = async () => {
-      try {
-        const { data } = await supabase.from("profiles").select();
-        const admin = data?.find((p: any) => p.role === 'admin');
-        setCurrentAdmin(admin);
-      } catch (err) {
-        console.error("Error loading admin:", err);
-      }
-    };
-    loadAdmin();
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate("/admin");
+    }
   }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -47,26 +30,33 @@ const AdminLogin = () => {
     setError("");
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (error) {
-        setError(error.message);
-        return;
-      }
-
-      if (data.session) {
-        toast({
-          title: "Успешный вход",
-          description: "Добро пожаловать в админ панель!",
-        });
-        navigate("/admin");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          toast({
+            title: "Успешный вход",
+            description: "Добро пожаловать в админ панель!",
+          });
+          navigate("/admin");
+        } else {
+          setError("Не удалось получить токен авторизации");
+        }
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || "Ошибка при входе");
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError(`Произошла ошибка при входе: ${err.message}`);
+      setError("Произошла ошибка при подключении к серверу");
     } finally {
       setIsLoading(false);
     }
@@ -135,15 +125,13 @@ const AdminLogin = () => {
             </Button>
           </form>
 
-          {currentAdmin && (
-            <div className="mt-4 p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                Текущие данные администратора:<br/>
-                Email: {currentAdmin.email}<br/>
-                Пароль: {currentAdmin.password ? '********' : 'не установлен'}
-              </p>
-            </div>
-          )}
+          <div className="mt-4 p-4 bg-muted rounded-lg">
+            <p className="text-sm text-muted-foreground">
+              Данные для входа:<br/>
+              Email: admin@example.com<br/>
+              Пароль: admin
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
