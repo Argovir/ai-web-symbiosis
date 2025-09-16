@@ -27,26 +27,56 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
   const { toast } = useToast();
 
   const handleSaveProfile = async () => {
+    if (!profile?.user_id) {
+      toast({
+        title: "Ошибка",
+        description: "ID пользователя не найден",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (profile?.role === 'admin' && (!formData.email || !formData.email.trim())) {
+      toast({
+        title: "Ошибка",
+        description: "Email обязателен для заполнения",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error("No token found");
 
-      const response = await fetch(`http://localhost:3001/api/profiles/${profile?.user_id}`, {
+      const response = await fetch(`http://localhost:3001/api/profiles/${profile.user_id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          email: formData.email,
-          full_name: formData.full_name,
-          role: formData.role,
-          avatar_url: formData.avatar_url,
+          email: profile?.role === 'admin' ? formData.email.trim() : undefined,
+          full_name: formData.full_name?.trim() || null,
+          role: profile?.role === 'admin' ? formData.role : undefined,
+          avatar_url: formData.avatar_url?.trim() || null,
         })
       });
 
-      if (!response.ok) throw new Error('Failed to update profile');
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          throw new Error("Email уже используется другим пользователем");
+        } else if (response.status === 403) {
+          throw new Error("Недостаточно прав для обновления профиля");
+        } else if (response.status === 404) {
+          throw new Error("Профиль не найден");
+        } else {
+          throw new Error(data.error || 'Failed to update profile');
+        }
+      }
 
       toast({
         title: "Профиль обновлен",
@@ -58,7 +88,7 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
       console.error("Error updating profile:", error);
       toast({
         title: "Ошибка",
-        description: "Не удалось обновить профиль",
+        description: error instanceof Error ? error.message : "Не удалось обновить профиль",
         variant: "destructive",
       });
     } finally {
@@ -155,8 +185,14 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="admin@example.com"
+                  disabled={profile?.role !== 'admin'}
                 />
               </div>
+              {profile?.role !== 'admin' && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Только администраторы могут изменять email
+                </p>
+              )}
             </div>
             <div>
               <Label htmlFor="full_name">Полное имя</Label>
@@ -184,6 +220,7 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
                   id="role"
                   value={formData.role}
                   onChange={(e) => setFormData(prev => ({ ...prev, role: e.target.value }))}
+                  disabled={profile?.role !== 'admin'}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <option value="admin">Администратор</option>
@@ -191,6 +228,11 @@ export const ProfileManager = ({ profile, onUpdate }: ProfileManagerProps) => {
                   <option value="user">Пользователь</option>
                 </select>
               </div>
+              {profile?.role !== 'admin' && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Только администраторы могут изменять роли
+                </p>
+              )}
             </div>
             <Button onClick={handleSaveProfile} disabled={saving}>
               {saving ? (

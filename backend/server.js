@@ -106,16 +106,57 @@ app.patch('/api/profiles/:userId', authenticateToken, async (req, res) => {
     const { userId } = req.params;
     const { email, full_name, role, avatar_url } = req.body;
 
+    // Check if user is updating their own profile
+    if (userId !== req.user.id) {
+      return res.status(403).json({ error: 'Forbidden: Can only update own profile' });
+    }
+
+    // Check current user role for authorization
+    const currentUserResult = await pool.query('SELECT role FROM profiles WHERE user_id = $1', [req.user.id]);
+    const currentUserRole = currentUserResult.rows[0]?.role;
+
+    // Build dynamic update query
+    const updates = {};
+    if (email !== undefined) {
+      if (!email || !email.trim()) {
+        return res.status(400).json({ error: 'Email is required' });
+      }
+      updates.email = email.trim();
+    }
+    if (full_name !== undefined) updates.full_name = full_name?.trim() || null;
+    if (role !== undefined) {
+      if (currentUserRole !== 'admin') {
+        return res.status(403).json({ error: 'Only administrators can change roles' });
+      }
+      updates.role = role || 'admin';
+    }
+    if (avatar_url !== undefined) updates.avatar_url = avatar_url?.trim() || null;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const fields = Object.keys(updates);
+    const setClause = fields.map((field, index) => `${field} = $${index + 1}`).join(', ');
+    const values = fields.map(field => updates[field]);
+
     const result = await pool.query(
-      `UPDATE profiles SET email = $1, full_name = $2, role = $3, avatar_url = $4, updated_at = NOW()
-       WHERE user_id = $5 RETURNING *`,
-      [email, full_name, role, avatar_url, userId]
+      `UPDATE profiles SET ${setClause}, updated_at = NOW() WHERE user_id = $${values.length + 1} RETURNING *`,
+      [...values, userId]
     );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
 
     res.json({ data: result.rows[0], error: null });
   } catch (error) {
     console.error('Update profile error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (error.code === '23505') { // Unique constraint violation (email already exists)
+      res.status(409).json({ error: 'Email already exists' });
+    } else {
+      res.status(500).json({ error: 'Internal server error' });
+    }
   }
 });
 

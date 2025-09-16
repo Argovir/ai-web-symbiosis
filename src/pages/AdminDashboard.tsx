@@ -72,7 +72,8 @@ const AdminDashboard = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setProfile(data.data);
+        // data.data is an array, take the first profile
+        setProfile(data.data && data.data.length > 0 ? data.data[0] : null);
       }
     } catch (error) {
       console.error("Error checking user:", error);

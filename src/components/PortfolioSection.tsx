@@ -220,28 +220,32 @@ const PortfolioSection = () => {
 
                   {/* Action Buttons */}
                   <div className="flex gap-3 mt-auto">
-                    <Button
-                      size="sm"
-                      variant="default"
-                      className="flex-1 gap-2"
-                      asChild
-                    >
-                      <a href={project.live_url || "#"} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="w-4 h-4" />
-                        Демо
-                      </a>
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-2"
-                      asChild
-                    >
-                      <a href={project.github_url || "#"} target="_blank" rel="noopener noreferrer">
-                        <Github className="w-4 h-4" />
-                        Код
-                      </a>
-                    </Button>
+                    {project.live_url && (
+                      <Button
+                        size="sm"
+                        variant="default"
+                        className="flex-1 gap-2"
+                        asChild
+                      >
+                        <a href={project.live_url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="w-4 h-4" />
+                          Демо
+                        </a>
+                      </Button>
+                    )}
+                    {project.github_url && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`${project.live_url ? 'gap-2' : 'flex-1 gap-2'}`}
+                        asChild
+                      >
+                        <a href={project.github_url} target="_blank" rel="noopener noreferrer">
+                          <Github className="w-4 h-4" />
+                          Код
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
