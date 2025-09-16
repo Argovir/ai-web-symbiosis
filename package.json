@@ -1,7 +1,7 @@
 {
   "name": "vite_react_shadcn_ts",
   "private": true,
-  "homepage": "http://argovir.github.io/ai-web-symbiosis/",
+  "homepage": "https://argovir.github.io/ai-web-symbiosis/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -10,8 +10,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "deploy": "",
-    "predeploy": ""
+    "deploy": "gh-pages -d dist",
+    "predeploy": "npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
