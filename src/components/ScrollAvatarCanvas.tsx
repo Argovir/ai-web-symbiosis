@@ -14,7 +14,7 @@ const ScrollAvatarCanvas = ({ className = "" }: { className?: string }) => {
 
     // Создаем массив путей к изображениям (правильные пути для Vite)
     const images: string[] = [];
-    for (let i = 1; i <= 55; i++) {
+    for (let i = 17; i <= 35; i++) {
       const frameNumber = i.toString().padStart(3, "0");
       images.push(`/animation/avatars/${frameNumber}.jpg`);
     }

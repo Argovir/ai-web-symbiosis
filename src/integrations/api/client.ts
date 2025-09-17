@@ -213,7 +213,7 @@ export const db = {
                            table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
                            table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
             const result = await apiCall(endpoint);
-            let data = result.data;
+            const data = result.data;
             data.sort((a: any, b: any) => {
               const aVal = a[orderBy];
               const bVal = b[orderBy];
@@ -237,7 +237,7 @@ export const db = {
                          table === 'portfolio_projects' ? (isAdminPage && hasToken ? `/admin/portfolio-projects` : `/portfolio-projects`) :
                          table === 'blog_posts' ? (isAdminPage && hasToken ? `/admin/blog-posts` : `/blog-posts`) : `/${table}`;
           const result = await apiCall(endpoint);
-          let data = result.data;
+          const data = result.data;
           data.sort((a: any, b: any) => {
             const aVal = a[orderBy];
             const bVal = b[orderBy];
