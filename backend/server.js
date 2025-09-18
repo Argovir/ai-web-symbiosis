@@ -7,13 +7,15 @@ const compression = require('compression');
 const helmet = require('helmet');
 require('dotenv').config();
 
-const app = express();
-const port = process.env.PORT || 3001;
-
 // Database connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
+
+const app = express();
+const port = process.env.PORT || 3001;
+
+// Database connection via Supabase
 
 // Middleware
 app.use(helmet());

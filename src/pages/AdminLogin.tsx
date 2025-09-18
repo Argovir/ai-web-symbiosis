@@ -125,13 +125,6 @@ const AdminLogin = () => {
             </Button>
           </form>
 
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground">
-              Данные для входа:<br/>
-              Email: admin@example.com<br/>
-              Пароль: admin
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>
